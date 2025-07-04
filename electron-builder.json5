@@ -1,0 +1,50 @@
+// @see - https://www.electron.build/configuration/configuration
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "net.toolbox.hadikaraki",
+  "asar": true,
+  "compression": "maximum",
+  "npmRebuild": false,
+  "nodeGypRebuild": false,
+  "buildDependenciesFromSource": false,
+  "productName": "Toolbox Pro",
+  "publish": {
+    "provider": "github",
+    "owner": "HadiKaraki",
+    "repo": "toolbox-public",
+    "releaseType": "release", // Ensures GitHub Releases are used
+    "publishAutoUpdate": true  // Moved here (global setting)
+  },
+  "directories": {
+    "output": "release/${version}"
+  },
+  "files": [
+    "dist",
+    "dist-electron"
+  ],
+  "mac": {
+    "target": ["dmg"],
+    "binaries": ["**/*.node"],
+    "artifactName": "${productName}-Mac-${version}-Installer.${ext}",
+    "publish": ["github"] // Explicitly publish macOS artifacts
+  },
+  "win": {
+    "target": [{
+      "target": "nsis",
+      "arch": ["x64"]
+    }],
+    "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
+    "publish": ["github"] // Explicitly publish Windows artifacts
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false
+  },
+  "linux": {
+    "target": ["AppImage"],
+    "artifactName": "${productName}-Linux-${version}.${ext}",
+    "publish": ["github"] // Explicitly publish Linux artifacts
+  }
+}
