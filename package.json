@@ -8,7 +8,6 @@
     "build": "npx cross-env NODE_ENV=production tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "cross-env NODE_ENV=production vite preview",
-    "prebuild": "npm prune --production && npx electron-builder prune",
     "package": "npx cross-env NODE_ENV=production electron-builder --dir",
     "package:win": "npx cross-env NODE_ENV=production electron-builder --win",
     "package:mac": "NODE_ENV=production electron-builder --macos",
