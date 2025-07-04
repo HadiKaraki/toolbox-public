@@ -6,12 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4 # Checks out your code
+      - uses: actions/setup-node@v4 # Sets up Node.js
         with:
           node-version: 21.2.0
-      - run: npm ci
-      - run: npm run build
+      - run: npm ci # Installs dependencies
+      - run: npm run build # Builds your app (runs `vite build`)
       - run: npx electron-builder build --publish always
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Auto-publishes to GitHub Releases
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Auto-publishes to GitHub Releases. Grants publish permissions
