@@ -22,7 +22,9 @@ export default defineConfig({
                 'sharp',
                 'fluent-ffmpeg',
                 '@ffmpeg-installer/ffmpeg',
-                '@ffprobe-installer/ffprobe'
+                '@ffprobe-installer/ffprobe',
+                'ffmpeg-static',
+                'ffprobe-static'
               ],
               output: {
                 manualChunks: (id) => {

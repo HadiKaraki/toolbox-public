@@ -50,9 +50,11 @@ const AudioSubmitBtn: React.FC<AudioSubmitBtnProps> = ({
       <button
           onClick={handleProcessing}
           disabled={!audioFile || progress > 0}
-          className={`w-full dark:bg-black dark:text-white dark:hover:bg-gray-600 flex mt-3 justify-center items-center py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors ${
-            !audioFile || progress > 0 ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 shadow-md
+          ${!audioFile || progress > 0 
+            ? 'dark:bg-gray-700 bg-gray-300 dark:text-gray-600 cursor-not-allowed' 
+            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700'}
+          `}
         >
         
         {/* START TITLE */}

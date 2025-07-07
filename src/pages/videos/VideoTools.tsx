@@ -1,7 +1,8 @@
+import { useState } from "react";
 import ToolCard from "../../components/ToolCard";
 
 export default function VideoTools() {
-  const tools = [
+  const allTools = [
     {
       name: 'Compress Video',
       path: '/video/compress',
@@ -88,14 +89,15 @@ export default function VideoTools() {
     }    
   ];
 
+  const [searchTerm, setSearchTerm] = useState('');
+    
+  const filteredTools = allTools.filter(tool => 
+    tool.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    tool.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
   return (
     <div className="min-h-screen">
-      {/* Decorative background elements */}
-      {/* <div className="absolute inset-0 overflow-hidden opacity-10">
-        <div className="absolute top-0 left-0 w-32 h-32 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-0 left-1/2 w-32 h-32 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-      </div> */}
 
       <div className="container mx-auto px-4 py-12 relative">
         {/* Page Header */}
@@ -109,9 +111,20 @@ export default function VideoTools() {
           </p>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-8 max-w-2xl mx-auto">
+          <input
+            type="text"
+            placeholder="Search video tools..."
+            className="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto gap-6">
-          {tools.map((tool, index) => (
+          {filteredTools.map((tool, index) => (
             <ToolCard 
               key={index}
               icon={tool.icon}
@@ -121,6 +134,10 @@ export default function VideoTools() {
             />
           ))}
         </div>
+
+        {filteredTools.length === 0 &&
+          <h1 className='text-center text-3xl font-bold dark:text-white'>No tools found</h1>
+        }
       </div>
     </div>
   );

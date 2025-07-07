@@ -23,8 +23,8 @@ export default function ImageSubmitBtn({
         disabled={!imageFile || isProcessing}
         className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 shadow-md
           ${!imageFile || isProcessing 
-            ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'}
+            ? 'dark:bg-gray-700 bg-gray-300 dark:text-gray-600 cursor-not-allowed' 
+            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700'}
         `}
       >
         {isProcessing ? (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRef } from 'react';
 
 interface VideoMetadata {
   duration?: number;
@@ -27,9 +28,16 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
   videoMetadata,
   videoURL,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+  };
+
+  const handleClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -41,6 +49,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
           className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
+          onClick={handleClick}
         >
           <label className="flex flex-col items-center justify-center space-y-2 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -48,10 +57,17 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-gray-600 dark:text-white">Click to upload or drag and drop</span>
-            <span className="text-sm text-gray-500 dark:text-gray-400">MP4, MOV, AVI etc. up to 100MB</span>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">or</p>
+            <button 
+              className="text-white py-2 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700"
+            >
+              Browse Files
+            </button>
+            <span className="text-sm text-gray-500 dark:text-gray-400">MP4, MOV, AVI etc.</span>
             <input 
               type="file"
               onChange={handleFileChange}
+              ref={fileInputRef}
               accept="video/*"
               className="hidden"
             />

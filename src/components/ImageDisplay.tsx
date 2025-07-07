@@ -49,7 +49,7 @@ interface ImageDisplayProps {
               <p className="text-gray-500 dark:text-gray-400 mb-2">Drag & drop an image here</p>
               <p className="text-gray-500 dark:text-gray-400 mb-4">or</p>
               <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="text-white py-2 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700"
               >
                 Browse Files
               </button>

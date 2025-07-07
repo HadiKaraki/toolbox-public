@@ -99,7 +99,7 @@ export default function AudioPlaybackSpeed() {
         }
 
         const originalName = audioFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_playback.${extension}`;
+        const outputFilename = `${originalName}_speed.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {

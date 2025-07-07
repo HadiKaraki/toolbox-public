@@ -1,7 +1,9 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
-// import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { ffmpegManager } from './ffmpegManager';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+import ffprobePath from '@ffprobe-installer/ffprobe';
+import fluentFfmpeg from 'fluent-ffmpeg';
 import path from 'node:path'
 import { setupAutoUpdater } from './autoUpdater';
 import fs from 'fs/promises'; // Using promises API for cleaner async code
@@ -25,29 +27,51 @@ import { videoPlaybackHandler } from './video/videoPlaybackSpeed.ts';
 import { trimVideoHandler } from './video/videoTrimming.ts';
 import { videoVolumeHandler } from './video/videoVolumeAdjust.ts';
 import { videoStabilizationHandler } from './video/videoStabilization.ts';
+// AUDIOS
+import { audioPitchHandler } from './audio/audioPitch.ts';
+import { audioVolumeHandler } from './audio/audioVolume.ts';
+import { audioSpeedHandler } from './audio/audioSpeed.ts';
+import { audioOptimizeHandle } from './audio/audioOptimization.ts';
+import { audioNormalizingHandler } from './audio/audioNormalize.ts';
+import { audioReverseHandler } from './audio/audioReversing.ts';
+import { audioConvertingHandler } from './audio/audioConverting.ts';
+import { audioEchoHandler } from './audio/audioEcho.ts';
+import { audioFadingHandler } from './audio/audioFading.ts';
 
-// const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 process.env.APP_ROOT = path.join(__dirname, '..')
 
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
-let win: BrowserWindow | null
+function configureFfmpeg() {
+  if (process.env.NODE_ENV === 'development') {
+    fluentFfmpeg.setFfmpegPath(ffmpegPath.path);
+    fluentFfmpeg.setFfprobePath(ffprobePath.path);
+  } else {
+    fluentFfmpeg.setFfmpegPath(
+      path.join(process.resourcesPath, 'ffmpeg', 'ffmpeg.exe')
+    );
+    fluentFfmpeg.setFfprobePath(
+      path.join(process.resourcesPath, 'ffprobe', 'ffprobe.exe')
+    );
+  }
+}
 
-const isProduction = process.env.NODE_ENV === 'production';
+let win: BrowserWindow | null;
+
+configureFfmpeg();
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    // icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, 'toolbox-icon-nobg.png'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
-      devTools: !isProduction // Enable devTools only in development
+      preload: path.join(__dirname, 'preload.mjs')
     },
   })
 
@@ -63,74 +87,36 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 
-  if (isProduction) {
-    // Remove menu completely in production
-    Menu.setApplicationMenu(null);
-  } else {
-    // Keep developer tools available in development
-    win.webContents.openDevTools();
-  }
+  Menu.setApplicationMenu(null);
 
   return win;
 }
-
-// let updateWindow: BrowserWindow | null = null;
-
-// function createUpdaterWindow(): BrowserWindow {
-//   const win = new BrowserWindow({
-//     width: 400,
-//     height: 300,
-//     show: false, // Don't show immediately
-//     webPreferences: {
-//       preload: path.join(__dirname, 'preload.mjs'),
-//       nodeIntegration: false,
-//       contextIsolation: true
-//     },
-//     modal: true, // Make it modal to main window
-//     parent: BrowserWindow.getFocusedWindow() || undefined,
-//     skipTaskbar: true // Don't show in taskbar
-//   });
-
-//   // Load your updater UI
-//   if (process.env.VITE_DEV_SERVER_URL) {
-//     win.loadURL(`${process.env.VITE_DEV_SERVER_URL}/updater.html`);
-//   } else {
-//     win.loadFile(path.join(__dirname, '../renderer/updater.html'));
-//   }
-
-//   win.on('ready-to-show', () => win?.show());
-//   win.on('closed', () => { updateWindow = null; });
-
-//   return win;
-// }
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin') { // darwin is macos
     app.quit()
     win = null
   }
 })
 
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
+  // On OS X (macos) it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
 })
 
+// (?) set default installation path to /User/<name>/AppData/...
 app.setPath('userData', path.join(app.getPath('appData'), 'ToolboxPro'));
 
 app.whenReady().then(() => {
   createWindow();
 });
 
-// Processing Handles
-
-// Worker codes from main toolbox web app
 // IMAGES:
 imageBrightnessHandler();
 imageBlurringHandler();
@@ -150,7 +136,16 @@ extractAudioHandler();
 trimVideoHandler();
 videoVolumeHandler();
 videoStabilizationHandler();
-
+// AUDIOS
+audioPitchHandler();
+audioVolumeHandler();
+audioSpeedHandler();
+audioOptimizeHandle();
+audioNormalizingHandler();
+audioReverseHandler();
+audioConvertingHandler();
+audioEchoHandler();
+audioFadingHandler();
 // OTHER
 setupAutoUpdater();
 
@@ -158,17 +153,11 @@ ipcMain.handle('cancel-processing', (_, taskId: string) => {
   return { success: ffmpegManager.cancelProcess(taskId) };
 });
 
-ipcMain.handle('dialog:openFile', async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ['openFile']
-  })
-  return result;
-});
-
-// ipcMain.handle('show-update-window', async () => {
-//   // Only create updaterWindow if you need a separate window
-//   updateWindow = createUpdaterWindow();
-//   setupAutoUpdater(updateWindow);
+// ipcMain.handle('dialog:openFile', async () => {
+//   const result = await dialog.showOpenDialog({
+//     properties: ['openFile']
+//   })
+//   return result;
 // });
 
 // the _ in event means “I know there is a parameter here but I don’t use it”, to ignore the warnings.
@@ -199,24 +188,14 @@ ipcMain.handle('create-temp-file', async (_event, { data, extension }) => {
 
 ipcMain.handle('show-save-dialog', async (_event, defaultName) => {
   const { filePath } = await dialog.showSaveDialog({
-    title: 'Save Processed Image',
+    title: 'Save Processed File',
     defaultPath: defaultName,
     filters: [
-      { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] },
+      { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'bmp', 'webp', 'tiff', 'ico', 'ppm', 'svg', 'pgm', 'tga', 'avif', 'gif'] },
+      { name: 'Videos', extensions: ['mp4', 'mkv', 'webm', 'mov', 'avi', 'flv', 'ogg'] },
+      { name: 'Audios', extensions: ['mp3', 'wav', 'ogg', 'flac', 'm4a', 'aac', 'opus', 'alac'] },
       { name: 'All Files', extensions: ['*'] }
     ]
   });
   return filePath; // will be undefined if user cancels
 });
-
-// For file saving
-// ipcMain.handle('save-image-dialog', async (_, defaultFilename) => {
-//   const { filePath } = await dialog.showSaveDialog({
-//       title: 'Save Processed Image',
-//       defaultPath: defaultFilename,
-//       filters: [
-//         { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }
-//       ]
-//   });
-//   return filePath;
-// });

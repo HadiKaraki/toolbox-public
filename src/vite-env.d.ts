@@ -232,6 +232,25 @@ interface Window {
       duration: number;
     }) => Promise<{ success: boolean; message: string }>;
 
+    addEchoAudio: (args: {
+      inputPath: string;
+      outputPath: string;
+      taskId: string;
+      duration: number;
+      echoMode: string;
+    }) => Promise<{ success: boolean; message: string }>;
+
+    fadeAudio: (args: {
+      inputPath: string;
+      outputPath: string;
+      taskId: string;
+      duration: number;
+      fadeInStartTime: number;
+      fadeInDuration: number;
+      fadeOutStartTime: number;
+      fadeOutDuration: number;
+    }) => Promise<{ success: boolean; message: string }>;
+
     // OTHER
     createTempFile: (data: ArrayBuffer, extension: string) => Promise<{
       success: boolean;

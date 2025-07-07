@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import ToolCard from '../../components/ToolCard';
 
 export default function AudioTools() {
-  const moderateTools = [
+  const allTools = [
     {
         "name": "Trim Audio",
         "path": "/audio/trim",
@@ -38,9 +39,6 @@ export default function AudioTools() {
         "description": "Automatically detect and remove silent parts",
         "icon": "🔈"
     },
-  ];
-
-  const advancedTools = [
     {
         "name": "Optimize For Certain Modes",
         "path": "/audio/optimize",
@@ -85,6 +83,13 @@ export default function AudioTools() {
     },
   ];
 
+  const [searchTerm, setSearchTerm] = useState('');
+      
+  const filteredTools = allTools.filter(tool => 
+    tool.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    tool.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 relative">
@@ -98,19 +103,21 @@ export default function AudioTools() {
             Enhance, modify, and optimize your visuals in just a few clicks.
           </p>
         </div>
+
+        {/* Search Bar */}
+        <div className="mb-8 max-w-2xl mx-auto">
+          <input
+            type="text"
+            placeholder="Search audio tools..."
+            className="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
         
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto gap-6">
-          {moderateTools.map((tool, index) => (
-            <ToolCard 
-              key={index}
-              icon={tool.icon}
-              title={tool.name}
-              description={tool.description}
-              path={tool.path}
-            />
-          ))}
-          {advancedTools.map((tool, index) => (
+          {filteredTools.map((tool, index) => (
             <ToolCard 
               key={index}
               icon={tool.icon}
@@ -120,6 +127,10 @@ export default function AudioTools() {
             />
           ))}
         </div>
+        
+        {filteredTools.length === 0 &&
+          <h1 className='text-center text-3xl font-bold dark:text-white'>No tools found</h1>
+        }
       </div>
     </div>
   );

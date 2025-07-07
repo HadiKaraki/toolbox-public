@@ -20,7 +20,19 @@
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    "node_modules/@ffmpeg-installer/win32-x64/ffmpeg.exe",
+    "node_modules/@ffprobe-installer/win32-x64/ffprobe.exe"
+  ],
+  "extraResources": [
+    {
+      "from": "node_modules/@ffmpeg-installer/win32-x64",
+      "to": "ffmpeg"
+    },
+    {
+      "from": "node_modules/@ffprobe-installer/win32-x64",
+      "to": "ffprobe"
+    }
   ],
   "mac": {
     "target": ["dmg"],
@@ -33,6 +45,7 @@
       "target": "nsis",
       "arch": ["x64"]
     }],
+    "icon": "dist/toolbox-icon-nobg-ico.ico",
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
     "publish": ["github"] // Explicitly publish Windows artifacts
   },

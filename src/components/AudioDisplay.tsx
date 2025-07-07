@@ -47,7 +47,7 @@ const AudioDisplay: React.FC<AudioDisplayProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-gray-600 dark:text-white">Click to upload or drag and drop</span>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Max file size: 20MB. For best performance, use compressed formats like MP3, AAC, or OGG.</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">For best performance, use compressed formats like MP3, AAC, or OGG.</span>
             <input
                 type="file" 
                 // dont allow mp4; those formats are supported by ffmpeg

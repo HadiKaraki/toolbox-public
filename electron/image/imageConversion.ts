@@ -21,6 +21,8 @@ export async function convertImage({ inputPath, outputPath, format }: Conversion
       ffmpeg(inputPath)
         .outputFormat(muxer)
         .output(outputPath)
+        .on('start', cmd => console.log('FFmpeg command:', cmd))
+        // .on('stderr', line => console.log('FFmpeg stderr:', line))
         .on('end', (stderr: string | null) => {
           if (stderr) {
             reject(new Error(stderr));

@@ -3,6 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "Edit, convert, and enhance images, videos, and audio files with our suite of professional tools.",
+  "author": {
+    "name": "Hadi Karaki"
+  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsc && vite",
     "build": "npx cross-env NODE_ENV=production tsc && vite build",

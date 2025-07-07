@@ -45,7 +45,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
   stabilizeVideo: (args: any) => ipcRenderer.invoke('video-stabilize', args),
   playbackSpeedVideo: (args: any) => ipcRenderer.invoke('video-playback', args),
   modifyVideoQuality: (args: any) => ipcRenderer.invoke('video-quality', args),
-  
+  // AUDIO
+  modifyAudioPitch: (args: any) => ipcRenderer.invoke('audio-pitch', args),
+  adjustAudioVolume: (args: any) => ipcRenderer.invoke('audio-volume', args),
+  playbackSpeedAudio: (args: any) => ipcRenderer.invoke('audio-speed', args),
+  optimizeAudioForMode: (args: any) => ipcRenderer.invoke('audio-optimize', args),
+  equalizeAudio: (args: any) => ipcRenderer.invoke('audio-equalize', args),
+  normalizeAudio: (args: any) => ipcRenderer.invoke('audio-normalize', args),
+  reverseAudio: (args: any) => ipcRenderer.invoke('audio-reverse', args),
+  convertAudio: (args: any) => ipcRenderer.invoke('audio-convert', args),
+  addEchoAudio: (args: any) => ipcRenderer.invoke('audio-echo', args),
+
   // REST:
   createTempFile: (data: ArrayBuffer, extension: string) => 
     ipcRenderer.invoke('create-temp-file', { data, extension }),
