@@ -57,6 +57,7 @@
   },
   "linux": {
     "target": ["AppImage"],
+    "icon": "dist/toolbox-icon-nobg.png",
     "artifactName": "${productName}-Linux-${version}.${ext}",
     "publish": ["github"] // Explicitly publish Linux artifacts
   }
