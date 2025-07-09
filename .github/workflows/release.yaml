@@ -10,11 +10,25 @@ jobs:
   build:
     runs-on: ubuntu-latest  # Key change
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm ci
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
       - run: sudo dpkg --add-architecture i386
       - run: sudo apt-get update
       - run: sudo apt-get install -y wine64 wine32
-      - run: npm run build
-      - run: npx electron-builder build --win --linux --publish always
+      
+      - name: Build Electron app
+        run: npx electron-builder build --win --linux --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
