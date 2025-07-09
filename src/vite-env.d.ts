@@ -251,6 +251,15 @@ interface Window {
       fadeOutDuration: number;
     }) => Promise<{ success: boolean; message: string }>;
 
+    trimAudio: (args: {
+      inputPath: string;
+      outputPath: string;
+      taskId: string;
+      duration: number;
+      startTime: string;
+      endTime: number;
+    }) => Promise<{ success: boolean; message: string }>;
+
     // OTHER
     createTempFile: (data: ArrayBuffer, extension: string) => Promise<{
       success: boolean;

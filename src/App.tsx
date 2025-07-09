@@ -34,6 +34,8 @@ import OptimizeForMode from './pages/audios/OptimizeForMode';
 import AudioEqualizer from './pages/audios/AudioEqualizer';
 import NormalizeAudio from './pages/audios/NormalizeAudio';
 import DownloadPage from './pages/DownloadPage';
+import TrimAudio from './pages/audios/TrimAudio';
+import FavoriteTools from './pages/FavoriteTools';
 
 function App() {
   return (
@@ -78,9 +80,11 @@ function App() {
           <Route path="/audio/optimize" element={<OptimizeForMode />} />
           <Route path="/audio/equalizer" element={<AudioEqualizer />} />
           <Route path="/audio/normalize" element={<NormalizeAudio />} />
+          <Route path="/audio/trim" element={<TrimAudio />} />
 
           {/* Other */}
           <Route path="/update" element={<UpdateManager />} />
+          <Route path="/favorites" element={<FavoriteTools />} />
 
           {/* fallback */}
           <Route path="*" element={<Home />} />

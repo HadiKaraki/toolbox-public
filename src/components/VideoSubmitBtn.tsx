@@ -50,11 +50,11 @@ const VideoSubmitBtn: React.FC<VideoSubmitBtnProps> = ({
       <button
           onClick={handleProcessing}
           disabled={!videoFile || progress > 0}
-          className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 shadow-md
-          ${!videoFile || progress > 0 
+          className={`w-full text-white dark:bg-black dark:text-white dark:hover:bg-gray-600 flex mt-3 justify-center items-center py-3 px-4 rounded-md shadow-sm text-sm font-medium bg-blue-600 transition-colors ${
+            !videoFile || progress > 0
             ? 'dark:bg-gray-700 bg-gray-300 dark:text-gray-600 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700'}
-          `}
+            : 'bg-gradient-to-r hover:bg-blue-700 from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700'}
+          }`}
         >
         
         {/* START TITLE */}
