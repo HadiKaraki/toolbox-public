@@ -27,8 +27,17 @@ jobs:
       - run: sudo dpkg --add-architecture i386
       - run: sudo apt-get update
       - run: sudo apt-get install -y wine64 wine32
-      
+
       - name: Build Electron app
         run: npx electron-builder build --win --linux --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: |
+            release/*.exe
+            release/*.AppImage
+            release/*.yml
