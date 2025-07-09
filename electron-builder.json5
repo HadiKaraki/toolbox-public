@@ -36,6 +36,7 @@
   ],
   "mac": {
     "target": ["dmg"],
+    icon": "dist/toolbox-icns-nobg.icns",
     "binaries": ["**/*.node"],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}",
     "publish": ["github"] // Explicitly publish macOS artifacts
