@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             platform: linux
@@ -18,9 +18,9 @@ jobs:
           - os: windows-latest
             platform: win
             artifact: nsis
-          # - os: macos-latest
-          #   platform: mac
-          #   artifact: dmg
+          - os: macos-latest
+            platform: mac
+            artifact: dmg
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -37,6 +37,8 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - run: node --max-old-space-size=4096 ./node_modules/vite/bin/vite.js build
+
       - name: Build Electron app
         run: npx electron-builder build --${{ matrix.platform }} --publish always
         env:
@@ -49,5 +51,6 @@ jobs:
           name: release-assets
           path: |
             release/*.exe
+            release/*.dmg
             release/*.AppImage
             release/*.yml
