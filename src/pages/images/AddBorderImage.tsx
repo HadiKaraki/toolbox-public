@@ -136,7 +136,7 @@ export default function AddBorderImage() {
 
         // 2. Get save path
         const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_bordered_${extension}`;
+        const outputFilename = `${originalName}_bordered.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -228,7 +228,7 @@ export default function AddBorderImage() {
               </div>
 
               <ImageSubmitBtn
-                  btnTitle={"Adjust Brightness & Save"}
+                  btnTitle={"Add Border & Save"}
                   handleProcessing={handleProcessing}
                   imageFile={imageFile}
                   completedMsg={completedMsg}

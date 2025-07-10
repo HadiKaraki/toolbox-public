@@ -26,13 +26,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // the names of those (adjustBrightness etc.) should be names the same as vite-env.d.ts
   adjustBrightness: (args: any) => ipcRenderer.invoke('image-brightness', args),
   blurImage: (args: any) => ipcRenderer.invoke('image-blurring', args),
-  saturateImage: (args: any) => ipcRenderer.invoke('image-saturation', args),
+  modifySaturation: (args: any) => ipcRenderer.invoke('image-saturation', args),
   sharpenImage: (args: any) => ipcRenderer.invoke('image-sharpness', args),
   adjustGrayscale: (args: any) => ipcRenderer.invoke('image-grayscale', args),
   compressImage: (args: any) => ipcRenderer.invoke('image-compression', args),
   convertImage: (args: any) => ipcRenderer.invoke('image-conversion', args),
   noiseImage: (args: any) => ipcRenderer.invoke('image-noising', args),
   resizeImage: (args: any) => ipcRenderer.invoke('image-resize', args),
+  addBorder: (args: any) => ipcRenderer.invoke('image-border', args),
   // VIDEOS
   adjustVideoVolume: (args: any) => ipcRenderer.invoke('video-volume', args),
   adjustFps: (args: any) => ipcRenderer.invoke('video-fps', args),

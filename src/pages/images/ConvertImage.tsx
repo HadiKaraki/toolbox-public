@@ -96,7 +96,7 @@ export default function ConvertImage() {
 
         // 2. Get save path
         const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}.${format}`;
+        const outputFilename = `${originalName}_${format}.${format}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {

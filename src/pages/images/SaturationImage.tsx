@@ -61,6 +61,7 @@ export default function SaturationImage() {
         canvas.width = width;
         canvas.height = height;
 
+        ctx.filter = previewMode ? `saturate(${saturation})` : 'none';
         ctx.drawImage(img, 0, 0, width, height);
       };
 
@@ -94,7 +95,7 @@ export default function SaturationImage() {
         }
 
         const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_brightned.${extension}`;
+        const outputFilename = `${originalName}_saturated.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -137,7 +138,7 @@ export default function SaturationImage() {
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}
-            isPreviewed={false}
+            isPreviewed={true}
           />
           {/* Controls Section */}
           <div className="bg-white rounded-lg dark:bg-gray-800 dark:border-gray-700 shadow-md p-6 border border-gray-200">

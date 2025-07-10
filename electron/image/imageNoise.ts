@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
-import { getFormatNameForImages, getMuxersOfImages } from '../getMetadataFfprobe';
+// import { getFormatNameForImages, getMuxersOfImages } from '../getMetadataFfprobe';
 
 // Set FFmpeg path
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
@@ -19,14 +19,14 @@ interface ProcessingResult {
 
 export async function addNoise({ inputPath, outputPath, noise }: NoiseAdjustmentArgs): Promise<string> {
   try {
-    const format = await getFormatNameForImages(inputPath);
-    const muxer = getMuxersOfImages(format);
+    // const format = await getFormatNameForImages(inputPath);
+    // const muxer = getMuxersOfImages(format);
 
     await new Promise<void>((resolve, reject) => {
       ffmpeg(inputPath)
         .inputOptions('-framerate 1')
         .videoFilters(`noise=alls=${noise}:allf=t`)
-        .outputFormat(muxer)
+        .outputFormat("mjpeg")
         .output(outputPath)
         .on('end', (stderr: string | null) => {
           if (stderr) {

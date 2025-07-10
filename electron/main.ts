@@ -18,6 +18,8 @@ import { imageNoiseHandler } from './image/imageNoise.ts';
 import { imageConversionHandler } from './image/imageConversion.ts';
 import { imageGrayscaleHandler } from './image/imageGrayscale.ts';
 import { imageResizingHandler } from './image/imageResizing.ts';
+import { imageBorderHandler } from './image/imageBorder.ts';
+import { imagePixelatingHandler } from './image/imagePixelation.ts';
 // VIDEOS
 import { changeFpsHandler } from './video/videoChangeFps.ts';
 import { compressVideoHandler } from './video/videoCompressing.ts';
@@ -128,6 +130,8 @@ imageNoiseHandler();
 imageConversionHandler();
 imageGrayscaleHandler();
 imageResizingHandler();
+imageBorderHandler();
+imagePixelatingHandler();
 // VIDEOS
 changeFpsHandler();
 convertVideoHandler();
