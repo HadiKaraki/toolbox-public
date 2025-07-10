@@ -8,6 +8,10 @@ import ImageTools from './pages/images/ImageTools';
 import GrayscaleImage from './pages/images/GrayscaleImage';
 import CompressImage from './pages/images/CompressImage';
 import NoiseImage from './pages/images/NoiseImage';
+import SharpenImage from './pages/images/SharpenImage';
+import AddBorderImage from './pages/images/AddBorderImage';
+import AudioToImage from './pages/images/AudioToImage';
+import ResizeImage from './pages/images/ResizeImage';
 import SaturationImage from './pages/images/SaturationImage';
 import ConvertImage from './pages/images/ConvertImage';
 import PixelateImage from './pages/images/PixelateImage';
@@ -37,9 +41,6 @@ import NormalizeAudio from './pages/audios/NormalizeAudio';
 import DownloadPage from './pages/DownloadPage';
 import TrimAudio from './pages/audios/TrimAudio';
 import FavoriteTools from './pages/FavoriteTools';
-import SharpenImage from './pages/images/SharpenImage';
-import AddBorderImage from './pages/images/AddBorderImage';
-import AudioToImage from './pages/images/AudioToImage';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           
           {/* Images */}
           <Route path="/image/tools" element={<ImageTools />} />
+          <Route path="/image/resize" element={<ResizeImage />} />
           <Route path="/image/brightness" element={<BrightnessImage />} />
           <Route path="/image/blur" element={<BlurImage />} />
           <Route path="/image/grayscale" element={<GrayscaleImage />} />

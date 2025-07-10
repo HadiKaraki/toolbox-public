@@ -3,6 +3,12 @@ import ToolCard from '../../components/ToolCard';
 
 export default function ImageTools() {
   const allTools = [
+     {
+      name: 'Resize Image',
+      path: '/image/resize',
+      description: 'Resize images in pixels with fitting options',
+      icon: '📐',
+    },
     {
       name: 'Compress Image',
       path: '/image/compress',

@@ -144,14 +144,14 @@ export default function Home() {
           <h1 className="text-center text-3xl dark:text-white md:text-4xl font-bold leading-tight mb-6">Media Tools Directory</h1>
           <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             {toolCategories.map(category => (
-              <a 
+              <Link
                 key={category.id}
-                href={`#${category.id}`}
+                to={`/${category.id}/tools`}
                 className="flex items-center dark:bg-gray-700 dark:border-gray-800 bg-white px-3 py-1 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200"
               >
                 <span className="text-2xl mr-2">{category.icon}</span>
                 <span className="font-medium dark:text-white text-gray-800">{category.name}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>

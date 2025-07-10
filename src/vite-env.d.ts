@@ -13,6 +13,14 @@ interface ImportMeta {
 interface Window {
   electronAPI: {
     // IMAGES
+    resizeImage: (args: {
+      inputPath: string;
+      outputPath: string;
+      height: number;
+      width: number;
+      fit: string;
+    }) => Promise<{ success: boolean; message: string }>;
+
     adjustBrightness: (args: { 
       inputPath: string;
       outputPath: string;

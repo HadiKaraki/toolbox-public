@@ -133,9 +133,8 @@ const UpdateManager = () => {
 
   return (
     <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      height: '100%',
+      // height: '100%',
+      mt: 10,
       p: 3,
       backgroundColor: theme.palette.mode === 'dark' ? '#121212' : '#f5f7ff'
     }}>

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain,  } from 'electron'
 import { fileURLToPath } from 'node:url'
 import { ffmpegManager } from './ffmpegManager';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
@@ -17,6 +17,7 @@ import { imageCompressionHandler } from './image/imageCompression.ts';
 import { imageNoiseHandler } from './image/imageNoise.ts';
 import { imageConversionHandler } from './image/imageConversion.ts';
 import { imageGrayscaleHandler } from './image/imageGrayscale.ts';
+import { imageResizingHandler } from './image/imageResizing.ts';
 // VIDEOS
 import { changeFpsHandler } from './video/videoChangeFps.ts';
 import { compressVideoHandler } from './video/videoCompressing.ts';
@@ -87,7 +88,7 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 
-  Menu.setApplicationMenu(null);
+  // Menu.setApplicationMenu(null);
 
   return win;
 }
@@ -126,6 +127,7 @@ imageCompressionHandler();
 imageNoiseHandler();
 imageConversionHandler();
 imageGrayscaleHandler();
+imageResizingHandler();
 // VIDEOS
 changeFpsHandler();
 convertVideoHandler();

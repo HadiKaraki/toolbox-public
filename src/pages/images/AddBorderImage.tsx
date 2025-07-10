@@ -181,6 +181,7 @@ export default function AddBorderImage() {
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}
+            isPreviewed={true}
           />
           
           {/* Controls Section */}

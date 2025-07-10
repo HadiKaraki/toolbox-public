@@ -32,6 +32,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   compressImage: (args: any) => ipcRenderer.invoke('image-compression', args),
   convertImage: (args: any) => ipcRenderer.invoke('image-conversion', args),
   noiseImage: (args: any) => ipcRenderer.invoke('image-noising', args),
+  resizeImage: (args: any) => ipcRenderer.invoke('image-resize', args),
   // VIDEOS
   adjustVideoVolume: (args: any) => ipcRenderer.invoke('video-volume', args),
   adjustFps: (args: any) => ipcRenderer.invoke('video-fps', args),
