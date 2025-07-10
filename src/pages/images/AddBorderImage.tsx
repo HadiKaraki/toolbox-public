@@ -4,7 +4,7 @@ import ImageDisplay from '../../components/ImageDisplay';
 import ImageSubmitBtn from "../../components/ImageSubmitBtn";
 import BackToImageTools from "../../components/BackToImageTools";
 
-export default function BrightnessImage() {
+export default function AddBorderImage() {
     const { imageFile, setImageFile } = useImageContext();
     const [borderWidth, setBorderWidth] = useState(1);
     const [borderColor, setBorderColor] = useState('#000000');
@@ -164,7 +164,7 @@ export default function BrightnessImage() {
     };
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
         <BackToImageTools
           title={"Add Border"}
@@ -234,55 +234,6 @@ export default function BrightnessImage() {
                   error={error}
                   isProcessing={isProcessing}
               />
-
-              {/* Tips Section */}
-              <div className="bg-blue-50 p-4 dark:bg-gray-900/60 rounded-lg">
-                <h3 className="text-sm font-medium dark:text-white text-blue-800 mb-2">Brightness Adjustment Tips</h3>
-                    <ul className="text-xs text-blue-700 dark:text-gray-300 space-y-1">
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span><strong>0.0</strong> - Original brightness (no change)</span>
-                        </li>
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span><strong>0.1 to 0.5</strong> - Subtle brightening (good for underexposed photos)</span>
-                        </li>
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span><strong>0.6 to 1.0</strong> - Strong brightening (creates high-key effects)</span>
-                        </li>
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span><strong>-0.1 to -0.4</strong> - Subtle darkening (reduces glare/washed-out areas)</span>
-                        </li>
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span><strong>-0.5 to -1.0</strong> - Dramatic darkening (creates low-key/moody effects)</span>
-                        </li>
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>Use <strong>small increments (0.1-0.2)</strong> for precise adjustments</span>
-                        </li>
-                        <li className="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>Toggle <strong>Preview Mode</strong> to compare before/after results</span>
-                        </li>
-                    </ul>
-                </div>
             </div>
           </div>
         </div>

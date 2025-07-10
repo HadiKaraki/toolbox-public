@@ -121,7 +121,7 @@ export default function NoiseImage() {
     };
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
         <BackToImageTools
             title={"Add Noise"}
@@ -138,6 +138,7 @@ export default function NoiseImage() {
               previewMode={previewMode}
               imageFile={imageFile}
               canvasRef={canvasRef}
+              isPreviewed={false}
           />
           {/* Controls Section */}
           <div className="bg-white dark:bg-gray-800 dark:border-gray-700 rounded-lg shadow-md p-6 border border-gray-200">

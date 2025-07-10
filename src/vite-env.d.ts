@@ -67,6 +67,20 @@ interface Window {
       outputPath: string;
       mode: string;
     }) => Promise<{ success: boolean; message: string }>;
+
+    pixelateImage: (args: {
+      inputPath: string;
+      outputPath: string;
+      pixelate: number;
+      lowResolution: boolean;
+      nearestNeighbor: boolean;
+    }) => Promise<{ success: boolean; message: string }>;
+
+    addAudioToImage: (args: {
+      inputPath: string;
+      outputPath: string;
+      audioFile: File | null;
+    }) => Promise<{ success: boolean; message: string }>;
   
     // VIDEOS
     adjustVideoVolume: (args: {

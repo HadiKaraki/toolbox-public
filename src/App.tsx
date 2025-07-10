@@ -10,6 +10,7 @@ import CompressImage from './pages/images/CompressImage';
 import NoiseImage from './pages/images/NoiseImage';
 import SaturationImage from './pages/images/SaturationImage';
 import ConvertImage from './pages/images/ConvertImage';
+import PixelateImage from './pages/images/PixelateImage';
 import VideoTools from './pages/videos/VideoTools';
 import UpdateManager from './components/UpdateManager';
 import ChangeFps from './pages/videos/ChangeFps';
@@ -36,6 +37,9 @@ import NormalizeAudio from './pages/audios/NormalizeAudio';
 import DownloadPage from './pages/DownloadPage';
 import TrimAudio from './pages/audios/TrimAudio';
 import FavoriteTools from './pages/FavoriteTools';
+import SharpenImage from './pages/images/SharpenImage';
+import AddBorderImage from './pages/images/AddBorderImage';
+import AudioToImage from './pages/images/AudioToImage';
 
 function App() {
   return (
@@ -54,6 +58,10 @@ function App() {
           <Route path="/image/noise" element={<NoiseImage />} />
           <Route path="/image/saturation" element={<SaturationImage />} />
           <Route path="/image/convert" element={<ConvertImage />} />
+          <Route path="/image/sharpen" element={<SharpenImage />} />
+          <Route path="/image/border" element={<AddBorderImage />} />
+          <Route path="/image/pixelate" element={<PixelateImage />} />
+          <Route path="/image/audio-to-image" element={<AudioToImage />} />
 
           {/* Videos */}
           <Route path="/video/tools" element={<VideoTools />} />

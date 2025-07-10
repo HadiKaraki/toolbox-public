@@ -133,7 +133,7 @@ export default function RemoveAudioVideo() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
           <BackToVideoTools
             title={"Audio Remover"}
@@ -157,8 +157,8 @@ export default function RemoveAudioVideo() {
 
                 {/* Process Button */}
                 <VideoSubmitBtn
-                    progressTitle="Changing fps..."
-                    btnTitle="Change FPS & Save"
+                    progressTitle="Removing..."
+                    btnTitle="Remove Audio & Save"
                     completedMsg={completedMsg}
                     error={error}
                     cancelMsg={cancelMsg}

@@ -1,35 +1,40 @@
 import { useState, useRef, useEffect } from "react";
 import { useImageContext } from '../../contexts/ImageContext';
-import { handleCancelProcessing } from '../../utils/handleCancelProcessing';
-import { handleUploadPixelate } from '../../utils/images/handleUploadPixelate';
-import ImageDisplay from "../../components/ImageDisplay";
-import BackToImageTools from "../../components/BackToImageTools";
+import ImageDisplay from '../../components/ImageDisplay';
 import ImageSubmitBtn from "../../components/ImageSubmitBtn";
+import BackToImageTools from "../../components/BackToImageTools";
 
 export default function PixelateImage() {
     const { imageFile, setImageFile } = useImageContext();
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [pixelate, setPixelate] = useState(0);
     const [lowResolution, setLowResolution] = useState(false);
     const [nearestNeighbor, setNearestNeighbor] = useState(false);
-    const [imageURL, setImageURL] = useState(null);
-    const canvasRef = useRef(null);
+    const [error, setError] = useState<string | null>(null);
+    const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [previewMode, setPreviewMode] = useState(true);
-    const [cancelMsg, setCancelMsg] = useState(null);
-    const [abortController, setAbortController] = useState(null);
-    const [error, setError] = useState(null);
-    const [completedMsg, setCompletedMsg] = useState(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [taskId, setTaskId] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         setImageFile(file);
-        setImageURL(URL.createObjectURL(file));
       }
     };
 
-    // Load image into canvas when file or pixelate changes
+    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        if (!file.type.startsWith('image/')) {
+          setError('Please drop an image file');
+          return;
+        }
+        
+        setImageFile(file);
+      }
+    };
+
     useEffect(() => {
       if (!imageFile || !canvasRef.current) return;
 
@@ -37,7 +42,9 @@ export default function PixelateImage() {
       img.src = URL.createObjectURL(imageFile);
       img.onload = () => {
         const canvas = canvasRef.current;
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
+        if (!ctx) return;
         
         // Set canvas size to image size (with max constraints)
         const maxWidth = 800;
@@ -57,56 +64,64 @@ export default function PixelateImage() {
         canvas.width = width;
         canvas.height = height;
 
-        ctx.filter = previewMode
-        ? `pixelate(${1 + pixelate}) saturate(${pixelate})`
-        : 'none';
         ctx.drawImage(img, 0, 0, width, height);
-      };
-
-      return () => {
-        URL.revokeObjectURL(img.src);
       };
     }, [imageFile, pixelate, previewMode]);
 
     const handleRemoveImage = () => {
       setImageFile(null);
-      setImageURL(null);
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
     };
 
     const handleProcessing = async () => {
-        if (!imageFile) return;
-        try {
-            await handleUploadPixelate(
-              imageFile,
-              pixelate,
-              lowResolution,
-              nearestNeighbor,
-              setUploadProgress,
-              setCompletedMsg,
-              setError,
-              setCancelMsg,
-              setAbortController,
-              setTaskId
-            );
-        } catch (error) {
-            console.error('Pixelation failed:', error);
-            alert('Pixelation failed. Please try again.');
-        }
-    };
+      if (!imageFile) return;
+      
+      setIsProcessing(true);
+      setError(null);
+      setCompletedMsg(null);
 
-    const handleCancelUpload = () => {
-      if (abortController) {
-        abortController.abort();
-        setAbortController(null); 
+      try {
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const extension = imageFile.name.split('.').pop() || '.png';
+        const tempResult = await window.electronAPI.createTempFile(arrayBuffer, extension);
+        
+        if (!tempResult.success || !tempResult.path) {
+          throw new Error(tempResult.message || 'Failed to create temp file');
+        }
+
+        const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
+        const outputFilename = `${originalName}_pixelated.${extension}`;
+        const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
+        
+        if (!outputPath) {
+          throw new Error('Save canceled by user');
+        }
+
+        const result = await window.electronAPI.pixelateImage({
+          inputPath: tempResult.path,
+          outputPath,
+          pixelate,
+          lowResolution,
+          nearestNeighbor,
+        });
+
+        if (result.success) {
+          setCompletedMsg(result.message);
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Processing failed');
+      } finally {
+        setIsProcessing(false);
       }
     };
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
         <BackToImageTools
             title={"Pixelate Image"}
@@ -116,13 +131,14 @@ export default function PixelateImage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Upload & Preview Section */}
           <ImageDisplay
-            handleFileChange={handleFileChange}
-            handleRemoveImage={handleRemoveImage}
-            setPreviewMode={setPreviewMode}
-            previewMode={previewMode}
-            imageFile={imageFile}
-            canvasRef={canvasRef}
-            uploadProgress={uploadProgress}
+              handleFileChange={handleFileChange}
+              handleDrop={handleDrop}
+              handleRemoveImage={handleRemoveImage}
+              setPreviewMode={setPreviewMode}
+              previewMode={previewMode}
+              imageFile={imageFile}
+              canvasRef={canvasRef}
+              isPreviewed={false}
           />
           {/* Controls Section */}
           <div className="bg-white rounded-lg dark:bg-gray-800 dark:border-gray-700 shadow-md p-6 border border-gray-200">
@@ -154,29 +170,22 @@ export default function PixelateImage() {
                 <div className="flex mt-2">
                     <div className="mr-4">
                         <label className="mr-1 hover:cursor-pointer text-black dark:text-white" htmlFor="lowResolution">Low Resolution</label>
-                        <input id="lowResolution" onChange={() => setLowResolution(!lowResolution)} type="checkbox" value={lowResolution}/>
+                        <input id="lowResolution" onChange={() => setLowResolution(!lowResolution)} type="checkbox" checked={lowResolution}/>
                     </div>
                     <div>
                         <label className="mr-1 hover:cursor-pointer text-black dark:text-white" htmlFor="nearestNeighbor">Nearest-Neighbor Scaling </label>
-                        <input id="nearestNeighbor" onChange={() => setNearestNeighbor(!nearestNeighbor)} type="checkbox" value={nearestNeighbor}/>
+                        <input id="nearestNeighbor" onChange={() => setNearestNeighbor(!nearestNeighbor)} type="checkbox" checked={nearestNeighbor}/>
                     </div>
                 </div>
               </div>
 
               <ImageSubmitBtn
-                  btnTitle={"Apply Pixelation & Download"}
-                  handleCancelProcessing={handleCancelProcessing}
+                   btnTitle={"Pixelate Image & Save"}
                   handleProcessing={handleProcessing}
-                  handleCancelUpload={handleCancelUpload}
                   imageFile={imageFile}
                   completedMsg={completedMsg}
                   error={error}
-                  cancelMsg={cancelMsg}
-                  uploadProgress={uploadProgress}
-                  taskId={taskId}
-                  setTaskId={setTaskId}
-                  setCancelMsg={setCancelMsg}
-                  setUploadProgress={setUploadProgress}
+                  isProcessing={isProcessing}
               />
 
               {/* Tips Section */}

@@ -1,83 +1,87 @@
 import { useState, useRef, useEffect } from "react";
 import { useImageContext } from '../../contexts/ImageContext';
-import { handleAudioToImage } from '../../utils/images/handleAudioToImage';
-import { handleCancelProcessing } from '../../utils/handleCancelProcessing';
+import ImageDisplay from '../../components/ImageDisplay';
 import ImageSubmitBtn from "../../components/ImageSubmitBtn";
 import BackToImageTools from "../../components/BackToImageTools";
-import ImageDisplay from "../../components/ImageDisplay";
 
 export default function AudioToImage() {
     const { imageFile, setImageFile } = useImageContext();
-    const [audioFile, setAudioFile] = useState(null);
-    const canvasRef = useRef(null);
-    const [error, setError] = useState(null);
-    const [completedMsg, setCompletedMsg] = useState(null);
-    const [abortController, setAbortController] = useState(null);
-    const [cancelMsg, setCancelMsg] = useState(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [taskId, setTaskId] = useState(null);
+    const [audioFile, setAudioFile] = useState<File | null>(null);
+     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [completedMsg, setCompletedMsg] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [previewMode, setPreviewMode] = useState(true);
 
-    const handleFileChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-          const file = e.target.files[0];
-          setImageFile(file);
-          setImageURL(URL.createObjectURL(file));
-        }
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        setImageFile(file);
+      }
     };
 
-    const handleAudioFileChange = (e) => {
-        setError(null);
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            if (!file.type.startsWith('audio/') && file.type !== 'application/octet-stream') {
-                setError('Please select an audio file (MP3, WAV)');
-                return;
-            }
-            setAudioFile(file);
+    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        if (!file.type.startsWith('image/')) {
+          setError('Please drop an image file');
+          return;
         }
+        
+        setImageFile(file);
+      }
+    };
+
+    const handleAudioFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        setAudioFile(file);
+      }
     };
 
     useEffect(() => {
-        if (!imageFile || !canvasRef.current) return;
+      if (!imageFile || !canvasRef.current) return;
 
-        const img = new Image();
-        const url = URL.createObjectURL(imageFile);
-        img.src = url;
+      const img = new Image();
+      img.src = URL.createObjectURL(imageFile);
+      img.onload = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        const maxWidth = 800;
+        const maxHeight = 600;
+        let width = img.width;
+        let height = img.height;
 
-        img.onload = () => {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            
-            const maxWidth = 800;
-            const maxHeight = 600;
-            let width = img.width;
-            let height = img.height;
+        if (width > maxWidth) {
+          height = (maxWidth / width) * height;
+          width = maxWidth;
+        }
+        if (height > maxHeight) {
+          width = (maxHeight / height) * width;
+          height = maxHeight;
+        }
 
-            if (width > maxWidth) {
-                height = (maxWidth / width) * height;
-                width = maxWidth;
-            }
-            if (height > maxHeight) {
-                width = (maxHeight / height) * width;
-                height = maxHeight;
-            }
+        canvas.width = width;
+        canvas.height = height;
 
-            canvas.width = width;
-            canvas.height = height;
-            ctx.drawImage(img, 0, 0, width, height);
-        };
+        ctx.drawImage(img, 0, 0, width, height);
+      };
 
-        return () => {
-            URL.revokeObjectURL(url);
-        };
-    }, [imageFile]);
+      return () => {
+        URL.revokeObjectURL(img.src);
+      };
+    }, [imageFile, previewMode]);
 
     const handleRemoveImage = () => {
-        setImageFile(null);
-        if (canvasRef.current) {
-            const ctx = canvasRef.current.getContext('2d');
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        }
+      setImageFile(null);
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
     };
 
     const handleRemoveAudio = () => {
@@ -85,29 +89,48 @@ export default function AudioToImage() {
     };
 
     const handleProcessing = async () => {
-        if (!imageFile || !audioFile) return;
-        try {
-            await handleAudioToImage(
-                imageFile,
-                audioFile,
-                setUploadProgress,
-                setCompletedMsg,
-                setError,
-                setCancelMsg,
-                setAbortController,
-                setTaskId
-            );
-        } catch (error) {
-            console.error('Adding audio failed:', error);
-            alert('Adding audio failed. Please try again.');
-        }
-    };
+      if (!imageFile || !audioFile) return;
+      
+      setIsProcessing(true);
+      setError(null);
+      setCompletedMsg(null);
 
-    const handleCancelUpload = () => {
-        if (abortController) {
-            abortController.abort();
-            setAbortController(null); 
+      try {
+        // 1. Create temp file
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const extension = imageFile.name.split('.').pop() || '.png';
+        const tempResult = await window.electronAPI.createTempFile(arrayBuffer, extension);
+        
+        if (!tempResult.success || !tempResult.path) {
+          throw new Error(tempResult.message || 'Failed to create temp file');
         }
+
+        // 2. Get save path
+        const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
+        const outputFilename = `${originalName}_bordered_${extension}`;
+        const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
+        
+        if (!outputPath) {
+          throw new Error('Save canceled by user');
+        }
+
+        // 3. Process image
+        const result = await window.electronAPI.addAudioToImage({
+          inputPath: tempResult.path,
+          outputPath,
+          audioFile
+        });
+
+        if (result.success) {
+          setCompletedMsg(result.message);
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Processing failed');
+      } finally {
+        setIsProcessing(false);
+      }
     };
 
     return (
@@ -122,13 +145,13 @@ export default function AudioToImage() {
                 {/* Image Upload Section */}
                 <ImageDisplay
                     handleFileChange={handleFileChange}
+                    handleDrop={handleDrop}
                     handleRemoveImage={handleRemoveImage}
-                    // setPreviewMode={setPreviewMode}
-                    // previewMode={previewMode}
+                    setPreviewMode={setPreviewMode}
+                    previewMode={previewMode}
                     imageFile={imageFile}
                     canvasRef={canvasRef}
-                    hidePreview={true}
-                    uploadProgress={uploadProgress}
+                    isPreviewed={false}
                 />
                 {/* Audio Upload Section */}
                 <div className="bg-white dark:bg-gray-800 dark:border-gray-700 rounded-lg shadow-md p-6 border border-gray-200">
@@ -170,19 +193,12 @@ export default function AudioToImage() {
                         </div>
 
                         <ImageSubmitBtn
-                            btnTitle={"Add Audio & Download"}
-                            handleCancelProcessing={handleCancelProcessing}
+                            btnTitle={"Add Audio & Save"}
                             handleProcessing={handleProcessing}
-                            handleCancelUpload={handleCancelUpload}
                             imageFile={imageFile}
                             completedMsg={completedMsg}
                             error={error}
-                            cancelMsg={cancelMsg}
-                            uploadProgress={uploadProgress}
-                            taskId={taskId}
-                            setTaskId={setTaskId}
-                            setCancelMsg={setCancelMsg}
-                            setUploadProgress={setUploadProgress}
+                            isProcessing={isProcessing}
                         />
                     </div>
                 </div>

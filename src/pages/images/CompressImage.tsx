@@ -139,7 +139,7 @@ export default function CompressImage() {
     };
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
         <BackToImageTools
             title={"Compress Image"}
@@ -156,6 +156,7 @@ export default function CompressImage() {
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}
+            isPreviewed={false}
           />
           
           {/* Controls Section */}

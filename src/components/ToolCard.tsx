@@ -50,7 +50,7 @@ const ToolCard = ({ icon, title, description, path }: ToolCardProps) => {
           </div>
           <button 
             onClick={addedToFav ? handleRemoveFromFavorites : handleAddToFavorites}
-            className="text-xl"
+            className="text-xl hover:text-2xl hover:cursor-pointer"
             aria-label={addedToFav ? "Remove from favorites" : "Add to favorites"}
           >
             {addedToFav ? '❤️' : '🤍'}

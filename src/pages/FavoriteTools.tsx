@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import ToolCard from '../components/ToolCard';
+import { useState } from 'react';
 
 // Define the Tool type to match what your favorites array holds
 interface Tool {
@@ -17,6 +18,12 @@ interface FavoritesState {
 export default function FavoriteTools() {
   const favorites = useSelector(
     (state: { favorites: FavoritesState }) => state.favorites.favorites
+  );
+  const [searchTerm, setSearchTerm] = useState('');
+    
+  const filteredTools = favorites.filter(tool =>
+    tool.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    tool.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (favorites.length === 0) { 
@@ -36,13 +43,23 @@ export default function FavoriteTools() {
                 Favoite Tools
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                {/* Transform your images with professional-grade editing tools. 
-                Enhance, modify, and optimize your visuals in just a few clicks. */}
+                Easily access your most used tools in this page
             </p>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-8 min-w-2xl mx-auto">
+          <input
+            type="text"
+            placeholder="Search favorite tools..."
+            className="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-w-7xl mx-auto gap-6">
-            {favorites.map((tool) => (
+            {filteredTools.map((tool) => (
                 <ToolCard
                     key={tool.title}
                     icon={tool.icon}

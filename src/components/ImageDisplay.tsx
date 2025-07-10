@@ -8,6 +8,7 @@ interface ImageDisplayProps {
     previewMode: boolean;
     imageFile: File | null;
     canvasRef: React.RefObject<HTMLCanvasElement>;
+    isPreviewed: boolean;
   }
 
   export default function ImageDisplay({ 
@@ -17,7 +18,8 @@ interface ImageDisplayProps {
     setPreviewMode, 
     previewMode, 
     imageFile, 
-    canvasRef 
+    canvasRef,
+    isPreviewed
   }: ImageDisplayProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -82,7 +84,7 @@ interface ImageDisplayProps {
                 />
               </div>
               
-              <div className="mt-4 flex items-center">
+              <div className="mt-4 flex items-center" style={{display: isPreviewed ? 'block' : 'none'}}>
                 <label className="flex items-center cursor-pointer">
                   <div className="relative">
                     <input 

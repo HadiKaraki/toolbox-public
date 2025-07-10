@@ -8,7 +8,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
-export default function CompressImage() {
+export default function SharpenImage() {
     const { imageFile, setImageFile } = useImageContext();
     const [mode, setMode] = useState('balanced');
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -127,7 +127,7 @@ export default function CompressImage() {
     };
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
         <BackToImageTools
             title={"Sharpen Image"}
@@ -135,82 +135,84 @@ export default function CompressImage() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Upload & Preview Section */}
-          <ImageDisplay
-            handleFileChange={handleFileChange}
-            handleDrop={handleDrop}
-            handleRemoveImage={handleRemoveImage}
-            setPreviewMode={setPreviewMode}
-            previewMode={previewMode}
-            imageFile={imageFile}
-            canvasRef={canvasRef}
-          />
-          
-          {/* Controls Section */}
-          <div className="bg-white rounded-lg dark:bg-gray-800 dark:border-gray-700 shadow-md p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Sharpen Settings</h2>
+
+            {/* Upload & Preview Section */}
+            <ImageDisplay
+              handleFileChange={handleFileChange}
+              handleDrop={handleDrop}
+              handleRemoveImage={handleRemoveImage}
+              setPreviewMode={setPreviewMode}
+              previewMode={previewMode}
+              imageFile={imageFile}
+              canvasRef={canvasRef}
+              isPreviewed={false}
+            />
             
-            <div className="space-y-6">
-              <FormControl>
-                  <label className="dark:text-white text-black">Pre-made modes</label>
-                  <RadioGroup
-                      row
-                      aria-labelledby="demo-row-radio-buttons-group-label"
-                      name="row-radio-buttons-group"
-                      className="text-black dark:text-white"
-                      sx={{mt: 1}}
-                  >
-                      {["soft", "balanced", "strong"].map((val) => (
-                        <FormControlLabel
-                          key={val}
-                          checked={mode === val}
-                          onChange={(e) => setMode((e.target as HTMLInputElement).value)}
-                          value={val}
-                          disabled={!imageFile}
-                          control={<Radio />}
-                          label={val.charAt(0).toUpperCase() + val.slice(1)}
-                          className="mr-4"
-                        />
-                      ))}
-                  </RadioGroup>
-              </FormControl>
+            {/* Controls Section */}
+            <div className="bg-white rounded-lg dark:bg-gray-800 dark:border-gray-700 shadow-md p-6 border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Sharpen Settings</h2>
+              
+              <div className="space-y-6">
+                <FormControl>
+                    <label className="dark:text-white text-black">Pre-made modes</label>
+                    <RadioGroup
+                        row
+                        aria-labelledby="demo-row-radio-buttons-group-label"
+                        name="row-radio-buttons-group"
+                        className="text-black dark:text-white"
+                        sx={{mt: 1}}
+                    >
+                        {["soft", "balanced", "strong"].map((val) => (
+                          <FormControlLabel
+                            key={val}
+                            checked={mode === val}
+                            onChange={(e) => setMode((e.target as HTMLInputElement).value)}
+                            value={val}
+                            disabled={!imageFile}
+                            control={<Radio />}
+                            label={val.charAt(0).toUpperCase() + val.slice(1)}
+                            className="mr-4"
+                          />
+                        ))}
+                    </RadioGroup>
+                </FormControl>
 
-              <ImageSubmitBtn
-                  btnTitle={"Sharpen Image & Save"}
-                  handleProcessing={handleProcessing}
-                  imageFile={imageFile}
-                  completedMsg={completedMsg}
-                  error={error}
-                  isProcessing={isProcessing}
-              />
+                <ImageSubmitBtn
+                    btnTitle={"Sharpen Image & Save"}
+                    handleProcessing={handleProcessing}
+                    imageFile={imageFile}
+                    completedMsg={completedMsg}
+                    error={error}
+                    isProcessing={isProcessing}
+                />
 
-              {/* Tips Section */}
-              <div className="bg-blue-50 p-4 dark:bg-gray-900/60 rounded-lg">
-                <h3 className="text-sm font-medium text-blue-800 mb-2 dark:text-white">Tips</h3>
-                  <ul className="text-xs text-blue-700 space-y-1 dark:text-gray-300">
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span><strong>Soft</strong> - Slight detail enhancement</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span><strong>Balanced</strong> - Clear and crisp without overprocessing</span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span><strong>Strong</strong> - High sharpness, may reveal noise or artifacts</span>
-                    </li>
-                </ul>
+                {/* Tips Section */}
+                <div className="bg-blue-50 p-4 dark:bg-gray-900/60 rounded-lg">
+                  <h3 className="text-sm font-medium text-blue-800 mb-2 dark:text-white">Tips</h3>
+                    <ul className="text-xs text-blue-700 space-y-1 dark:text-gray-300">
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span><strong>Soft</strong> - Slight detail enhancement</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span><strong>Balanced</strong> - Clear and crisp without overprocessing</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span><strong>Strong</strong> - High sharpness, may reveal noise or artifacts</span>
+                      </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     );
 }

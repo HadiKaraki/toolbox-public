@@ -120,7 +120,7 @@ export default function SaturationImage() {
     };
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
         {/* Header Section */}
         <BackToImageTools
             title={"Modify Saturation"}
@@ -137,6 +137,7 @@ export default function SaturationImage() {
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}
+            isPreviewed={false}
           />
           {/* Controls Section */}
           <div className="bg-white rounded-lg dark:bg-gray-800 dark:border-gray-700 shadow-md p-6 border border-gray-200">

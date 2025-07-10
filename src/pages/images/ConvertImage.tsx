@@ -145,6 +145,7 @@ export default function ConvertImage() {
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}
+            isPreviewed={false}
           />
           
           {/* Controls Section */}
