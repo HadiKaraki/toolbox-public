@@ -46,7 +46,9 @@ const SideBar = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 10V6h6v4" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14h4" />
                     </svg>
-                    Toolbox Pro
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-xl font-bold">
+                        Toolbox Pro
+                    </div>
                 </Link>
             </div>
             <nav className="py-4">

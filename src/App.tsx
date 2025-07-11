@@ -41,6 +41,7 @@ import NormalizeAudio from './pages/audios/NormalizeAudio';
 import DownloadPage from './pages/DownloadPage';
 import TrimAudio from './pages/audios/TrimAudio';
 import FavoriteTools from './pages/FavoriteTools';
+import AddEcho from './pages/audios/AddEcho';
 
 function App() {
   return (
@@ -91,6 +92,7 @@ function App() {
           <Route path="/audio/equalizer" element={<AudioEqualizer />} />
           <Route path="/audio/normalize" element={<NormalizeAudio />} />
           <Route path="/audio/trim" element={<TrimAudio />} />
+          <Route path="/audio/echo" element={<AddEcho />} />
 
           {/* Other */}
           <Route path="/update" element={<UpdateManager />} />

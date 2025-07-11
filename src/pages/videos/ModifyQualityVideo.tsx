@@ -98,7 +98,7 @@ export default function ModifyQualityVideo() {
         }
 
         const originalName = videoFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_pitched.${extension}`;
+        const outputFilename = `${originalName}_quality.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {

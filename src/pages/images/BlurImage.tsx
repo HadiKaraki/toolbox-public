@@ -125,7 +125,7 @@ export default function BlurImage() {
         const result = await window.electronAPI.blurImage({
           inputPath: tempResult.path,
           outputPath,
-          blur: sigma + 1
+          sigma: sigma + 2
         });
 
         if (result.success) {

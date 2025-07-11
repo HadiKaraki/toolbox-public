@@ -30,7 +30,7 @@ interface Window {
     blurImage: (args: {
       inputPath: string;
       outputPath: string;
-      blur: number;
+      sigma: number;
     }) => Promise<{ success: boolean; message: string }>;
 
     adjustGrayscale: (args: {
@@ -52,7 +52,7 @@ interface Window {
       quality: number;
     }) => Promise<{ success: boolean; message: string }>;
 
-    addNoise: (args: {
+    noiseImage: (args: {
       inputPath: string;
       outputPath: string;
       noise: number;

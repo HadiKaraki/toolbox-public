@@ -95,14 +95,14 @@ export default function NoiseImage() {
         }
 
         const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_brightned.${extension}`;
+        const outputFilename = `${originalName}_noised.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
           throw new Error('Save canceled by user');
         }
 
-        const result = await window.electronAPI.addNoise({
+        const result = await window.electronAPI.noiseImage({
           inputPath: tempResult.path,
           outputPath,
           noise
