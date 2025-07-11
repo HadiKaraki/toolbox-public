@@ -42,6 +42,7 @@ import DownloadPage from './pages/DownloadPage';
 import TrimAudio from './pages/audios/TrimAudio';
 import FavoriteTools from './pages/FavoriteTools';
 import AddEcho from './pages/audios/AddEcho';
+import AddNoiseVideo from './pages/videos/AddNoiseVideo';
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
           <Route path="/video/playback-speed" element={<PlaybackSpeedVideo />} />
           <Route path="/video/stabilize" element={<StabilizeVideo />} />
           <Route path="/video/quality" element={<ModifyQualityVideo />} />
+          <Route path="/video/add-noise" element={<AddNoiseVideo />} />
 
           {/* Audios */}
           <Route path="/audio/tools" element={<AudioTools />} />

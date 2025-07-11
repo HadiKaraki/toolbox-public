@@ -158,6 +158,14 @@ interface Window {
       endTime: number;
     }) => Promise<{ success: boolean; message: string }>;
 
+    noiseVideo: (args: {
+      inputPath: string;
+      outputPath: string;
+      taskId: string;
+      duration: number;
+      noise: number;
+    }) => Promise<{ success: boolean; message: string }>;
+
     modifyVideoPitch: (args: {
       inputPath: string;
       outputPath: string;

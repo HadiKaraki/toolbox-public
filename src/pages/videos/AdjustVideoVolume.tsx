@@ -139,7 +139,7 @@ export default function AdjustVideoVolume() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToVideoTools
               title={"Volume Adjust"}

@@ -97,7 +97,7 @@ export default function RemoveAudioVideo() {
         }
 
         const originalName = videoFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_fps.${extension}`;
+        const outputFilename = `${originalName}_no_audio.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -133,7 +133,7 @@ export default function RemoveAudioVideo() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToVideoTools
             title={"Audio Remover"}

@@ -30,6 +30,8 @@ import { videoPlaybackHandler } from './video/videoPlaybackSpeed.ts';
 import { trimVideoHandler } from './video/videoTrimming.ts';
 import { videoVolumeHandler } from './video/videoVolumeAdjust.ts';
 import { videoStabilizationHandler } from './video/videoStabilization.ts';
+import { videoPitchHandler } from './video/videoPitch.ts';
+import { videoAudioRemovingHandler } from './video/videoRemoveAudio.ts';
 // AUDIOS
 import { audioPitchHandler } from './audio/audioPitch.ts';
 import { audioVolumeHandler } from './audio/audioVolume.ts';
@@ -142,6 +144,8 @@ extractAudioHandler();
 trimVideoHandler();
 videoVolumeHandler();
 videoStabilizationHandler();
+videoPitchHandler();
+videoAudioRemovingHandler();
 // AUDIOS
 audioPitchHandler();
 audioVolumeHandler();

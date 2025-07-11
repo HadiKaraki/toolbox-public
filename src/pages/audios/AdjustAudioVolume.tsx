@@ -141,7 +141,7 @@ export default function AdjustAudioVolume() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToAudioTools
               title={"Volume Adjust"}
