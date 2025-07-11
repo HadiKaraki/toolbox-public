@@ -88,6 +88,31 @@ export const getFormatNameForVideos = async (filePath: string): Promise<VideoFor
   return primaryFormat;
 };
 
+export const getCompressionOptionsForNoise = (noiseValue: number) => {
+    // Set bounds to prevent extremes
+    const clampedNoise = Math.max(0, Math.min(noiseValue, 100));
+  
+    // Interpolate CRF: low noise → 25, high noise → 35
+    const crf = 25 + ((clampedNoise / 100) * 10); // 25 → 35
+    const roundedCrf = Math.round(crf);
+  
+    // Interpolate bitrate: low noise → 4Mbps, high noise → 1Mbps
+    const maxBitrate = 4000 - ((clampedNoise / 100) * 3000); // 4000 kbps → 1000 kbps
+    const roundedBitrate = Math.round(maxBitrate);
+  
+    // Choose preset based on noise level
+    let preset;
+    if (clampedNoise < 20) preset = 'fast';
+    else if (clampedNoise < 60) preset = 'slow';
+    else preset = 'veryslow';
+  
+    return {
+        crf: roundedCrf,
+        bitrateKbps: roundedBitrate,
+        preset
+    };
+}
+
 /**
  * Get the primary audio format from format string
  * @param filePath Path to the audio file

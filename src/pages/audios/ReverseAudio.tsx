@@ -98,7 +98,7 @@ export default function ReverseAudio() {
         }
 
         const originalName = audioFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_playback.${extension}`;
+        const outputFilename = `${originalName}_reversed.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -139,7 +139,7 @@ export default function ReverseAudio() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToAudioTools
             title={"Reverse Audio"}

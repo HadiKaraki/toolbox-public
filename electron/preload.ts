@@ -47,6 +47,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   stabilizeVideo: (args: any) => ipcRenderer.invoke('video-stabilize', args),
   playbackSpeedVideo: (args: any) => ipcRenderer.invoke('video-playback', args),
   modifyVideoQuality: (args: any) => ipcRenderer.invoke('video-quality', args),
+  noiseVideo: (args: any) => ipcRenderer.invoke('video-noise', args),
   // AUDIO
   modifyAudioPitch: (args: any) => ipcRenderer.invoke('audio-pitch', args),
   adjustAudioVolume: (args: any) => ipcRenderer.invoke('audio-volume', args),

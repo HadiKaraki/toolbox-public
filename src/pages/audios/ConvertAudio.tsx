@@ -99,7 +99,7 @@ export default function ConvertAudio() {
         }
 
         const originalName = audioFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_volume.${extension}`;
+        const outputFilename = `${originalName}_${format}.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -141,7 +141,7 @@ export default function ConvertAudio() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToAudioTools
             title={"Audio Convertor"}

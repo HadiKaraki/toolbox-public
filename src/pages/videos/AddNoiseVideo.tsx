@@ -97,7 +97,7 @@ export default function AddNoiseVideo() {
         }
 
         const originalName = videoFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_volume.${extension}`;
+        const outputFilename = `${originalName}_noised.${extension}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {

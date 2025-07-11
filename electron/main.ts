@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain,  } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { fileURLToPath } from 'node:url'
 import { ffmpegManager } from './ffmpegManager';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
@@ -32,6 +32,7 @@ import { videoVolumeHandler } from './video/videoVolumeAdjust.ts';
 import { videoStabilizationHandler } from './video/videoStabilization.ts';
 import { videoPitchHandler } from './video/videoPitch.ts';
 import { videoAudioRemovingHandler } from './video/videoRemoveAudio.ts';
+import { videoNoiseHandler } from './video/videoNoise.ts';
 // AUDIOS
 import { audioPitchHandler } from './audio/audioPitch.ts';
 import { audioVolumeHandler } from './audio/audioVolume.ts';
@@ -92,7 +93,7 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 
-  // Menu.setApplicationMenu(null);
+  Menu.setApplicationMenu(null);
 
   return win;
 }
@@ -146,6 +147,7 @@ videoVolumeHandler();
 videoStabilizationHandler();
 videoPitchHandler();
 videoAudioRemovingHandler();
+videoNoiseHandler();
 // AUDIOS
 audioPitchHandler();
 audioVolumeHandler();

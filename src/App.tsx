@@ -43,6 +43,7 @@ import TrimAudio from './pages/audios/TrimAudio';
 import FavoriteTools from './pages/FavoriteTools';
 import AddEcho from './pages/audios/AddEcho';
 import AddNoiseVideo from './pages/videos/AddNoiseVideo';
+import FadeInOut from './pages/audios/FadeInOut';
 
 function App() {
   return (
@@ -94,6 +95,7 @@ function App() {
           <Route path="/audio/equalizer" element={<AudioEqualizer />} />
           <Route path="/audio/normalize" element={<NormalizeAudio />} />
           <Route path="/audio/trim" element={<TrimAudio />} />
+          <Route path="/audio/fade" element={<FadeInOut />} />
           <Route path="/audio/echo" element={<AddEcho />} />
 
           {/* Other */}
