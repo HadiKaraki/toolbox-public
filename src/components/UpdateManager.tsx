@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, CircularProgress, Box, Typography, useTheme } from '@mui/material';
-import { DownloadCloud, RefreshCw, CheckCircle2, AlertCircle, RotateCcw } from 'lucide-react';
+import { DownloadCloud, RefreshCw, CheckCircle2, AlertCircle,  } from 'lucide-react';
 
 const UpdateManager = () => {
   const [updateInfo, setUpdateInfo] = useState<{
@@ -16,41 +16,42 @@ const UpdateManager = () => {
 
   useEffect(() => {
     const checkUpdates = async () => {
-      // Simulate API call with delay
-      setTimeout(() => {
-        setUpdateInfo({
-          available: true,
-          version: "1.2.0",
-          releaseNotes: "• Added dark mode support\n• Improved performance by 30%\n• Fixed image export issues\n• Added new video filters\n• Enhanced security features"
-        });
-      }, 1500);
+      const result = await window.electronAPI.checkForUpdates();
+      console.log(result)
+      setUpdateInfo(result);
     };
 
     checkUpdates();
 
-    // Simulate download progress
-    if (isDownloading) {
-      const interval = setInterval(() => {
-        setDownloadProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          return prev + 5;
-        });
-      }, 300);
-      return () => clearInterval(interval);
-    }
-  }, [isDownloading]);
+    window.electronAPI.onUpdateDownloadProgress((progress) => {
+      setDownloadProgress(progress.percent);
+    });
+
+    return () => {
+      window.electronAPI.onUpdateDownloadProgress(() => {});
+    };
+  }, []);
 
   const handleDownload = async () => {
     setIsDownloading(true);
+    const result = await window.electronAPI.downloadUpdate();
+    if (result.success) {
+      setIsDownloading(false);
+    } else {
+      setUpdateInfo(prev => {
+        if (!prev) {
+            return { available: false, error: result.error };
+        }
+        return { ...prev, error: result.error };
+      });
+      setIsDownloading(false);
+    }
   };
 
-  const handleRestart = () => {
-    // In a real app, this would trigger the update installation
-    alert("Update would install and restart the application");
-  };
+  // const handleRestart = () => {
+  //   // In a real app, this would trigger the update installation
+  //   alert("Update would install and restart the application");
+  // };
 
   // Loading state
   if (!updateInfo) {
@@ -232,7 +233,7 @@ const UpdateManager = () => {
           </Button>
         )}
 
-        {downloadProgress >= 100 && (
+        {/* {downloadProgress >= 100 && (
           <Button
             variant="contained"
             color="success"
@@ -244,7 +245,7 @@ const UpdateManager = () => {
           >
             Restart & Install Update
           </Button>
-        )}
+        )} */}
       </Box>
     </Box>
   );
