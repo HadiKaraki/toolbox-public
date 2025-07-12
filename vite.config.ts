@@ -16,6 +16,8 @@ export default defineConfig({
         vite: {
           build: {
             minify: 'terser',  // Aggressive minification
+            chunkSizeWarningLimit: 1000, // Disable size warnings
+            reportCompressedSize: true,  // Show actual compressed sizes
             rollupOptions: {
               external: [
                 ...builtinModules,
@@ -43,8 +45,4 @@ export default defineConfig({
       renderer: process.env.NODE_ENV === 'test' ? undefined : {},
     }),
   ],
-  build: {
-    chunkSizeWarningLimit: 1000, // Disable size warnings
-    reportCompressedSize: true   // Show actual compressed sizes
-  }
 })

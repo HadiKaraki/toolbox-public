@@ -5,44 +5,9 @@ import ffmpegPath from '@ffmpeg-installer/ffmpeg';
 import ffprobePath from '@ffprobe-installer/ffprobe';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import path from 'node:path'
-import { setupAutoUpdater } from './autoUpdater';
 import fs from 'fs/promises'; // Using promises API for cleaner async code
 
 // IMAGES
-import { imageBrightnessHandler } from './image/imageBrightness.ts'
-import { imageBlurringHandler } from './image/imageBlurring.ts'
-import { imageSaturationHandler } from './image/imageSaturation.ts'
-import { imageSharpnessHandler } from './image/imageSharpening.ts'
-import { imageCompressionHandler } from './image/imageCompression.ts';
-import { imageNoiseHandler } from './image/imageNoise.ts';
-import { imageConversionHandler } from './image/imageConversion.ts';
-import { imageGrayscaleHandler } from './image/imageGrayscale.ts';
-import { imageResizingHandler } from './image/imageResizing.ts';
-import { imageBorderHandler } from './image/imageBorder.ts';
-// import { imagePixelatingHandler } from './image/imagePixelation.ts';
-// VIDEOS
-import { changeFpsHandler } from './video/videoChangeFps.ts';
-import { compressVideoHandler } from './video/videoCompressing.ts';
-import { convertVideoHandler } from './video/videoConversion.ts';
-import { videoEqualizerHandler } from './video/videoEqualizer.ts';
-import { extractAudioHandler } from './video/videoExtractAudio.ts';
-import { videoPlaybackHandler } from './video/videoPlaybackSpeed.ts';
-import { trimVideoHandler } from './video/videoTrimming.ts';
-import { videoVolumeHandler } from './video/videoVolumeAdjust.ts';
-import { videoStabilizationHandler } from './video/videoStabilization.ts';
-import { videoPitchHandler } from './video/videoPitch.ts';
-import { videoAudioRemovingHandler } from './video/videoRemoveAudio.ts';
-import { videoNoiseHandler } from './video/videoNoise.ts';
-// AUDIOS
-import { audioPitchHandler } from './audio/audioPitch.ts';
-import { audioVolumeHandler } from './audio/audioVolume.ts';
-import { audioSpeedHandler } from './audio/audioSpeed.ts';
-import { audioOptimizeHandle } from './audio/audioOptimization.ts';
-import { audioNormalizingHandler } from './audio/audioNormalize.ts';
-import { audioReverseHandler } from './audio/audioReversing.ts';
-import { audioConvertingHandler } from './audio/audioConverting.ts';
-import { audioEchoHandler } from './audio/audioEcho.ts';
-import { audioFadingHandler } from './audio/audioFading.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -119,47 +84,85 @@ app.on('activate', () => {
 // (?) set default installation path to /User/<name>/AppData/...
 app.setPath('userData', path.join(app.getPath('appData'), 'ToolboxPro'));
 
-app.whenReady().then(() => {
+app.whenReady().then(async() => {
+  const { imageBrightnessHandler } = await import('./image/imageBrightness.ts');
+  const { imageBlurringHandler } = await import('./image/imageBlurring.ts');
+  const { imageSaturationHandler } = await import('./image/imageSaturation.ts');
+  const { imageSharpnessHandler } = await import('./image/imageSharpening.ts');
+  const { imageCompressionHandler } = await import('./image/imageCompression.ts');
+  const { imageNoiseHandler } = await import('./image/imageNoise.ts');
+  const { imageConversionHandler } = await import('./image/imageConversion.ts');
+  const { imageGrayscaleHandler } = await import('./image/imageGrayscale.ts');
+  const { imageResizingHandler } = await import('./image/imageResizing.ts');
+  const { imageBorderHandler } = await import('./image/imageBorder.ts');
+  // import { imagePixelatingHandler } from './image/imagePixelation.ts';
+  // VIDEOS
+  const { changeFpsHandler } = await import('./video/videoChangeFps.ts');
+  const { compressVideoHandler } = await import('./video/videoCompressing.ts');
+  const { convertVideoHandler } = await import('./video/videoConversion.ts');
+  const { videoEqualizerHandler } = await import('./video/videoEqualizer.ts');
+  const { extractAudioHandler } = await import('./video/videoExtractAudio.ts');
+  const { videoPlaybackHandler } = await import('./video/videoPlaybackSpeed.ts');
+  const { trimVideoHandler } = await import('./video/videoTrimming.ts');
+  const { videoVolumeHandler } = await import('./video/videoVolumeAdjust.ts');
+  const { videoStabilizationHandler } = await import('./video/videoStabilization.ts');
+  const { videoPitchHandler } = await import('./video/videoPitch.ts');
+  const { videoAudioRemovingHandler } = await import('./video/videoRemoveAudio.ts');
+  const { videoNoiseHandler } = await import('./video/videoNoise.ts');
+  // AUDIOS
+  const { audioPitchHandler } = await import('./audio/audioPitch.ts');
+  const { audioVolumeHandler } = await import('./audio/audioVolume.ts');
+  const { audioSpeedHandler } = await import('./audio/audioSpeed.ts');
+  const { audioOptimizeHandle } = await import('./audio/audioOptimization.ts');
+  const { audioNormalizingHandler } = await import('./audio/audioNormalize.ts');
+  const { audioReverseHandler } = await import('./audio/audioReversing.ts');
+  const { audioConvertingHandler } = await import('./audio/audioConverting.ts');
+  const { audioEchoHandler } = await import('./audio/audioEcho.ts');
+  const { audioFadingHandler } = await import('./audio/audioFading.ts');
+  // OTHER
+  const { setupAutoUpdater } = await import('./autoUpdater');
+
+  // IMAGES:
+  imageBrightnessHandler();
+  imageBlurringHandler();
+  imageSaturationHandler();
+  imageSharpnessHandler();
+  imageCompressionHandler();
+  imageNoiseHandler();
+  imageConversionHandler();
+  imageGrayscaleHandler();
+  imageResizingHandler();
+  imageBorderHandler();
+  // imagePixelatingHandler();
+  // VIDEOS
+  changeFpsHandler();
+  convertVideoHandler();
+  compressVideoHandler();
+  videoEqualizerHandler();
+  videoPlaybackHandler();
+  extractAudioHandler();
+  trimVideoHandler();
+  videoVolumeHandler();
+  videoStabilizationHandler();
+  videoPitchHandler();
+  videoAudioRemovingHandler();
+  videoNoiseHandler();
+  // AUDIOS
+  audioPitchHandler();
+  audioVolumeHandler();
+  audioSpeedHandler();
+  audioOptimizeHandle();
+  audioNormalizingHandler();
+  audioReverseHandler();
+  audioConvertingHandler();
+  audioEchoHandler();
+  audioFadingHandler();
+  // OTHER
+  setupAutoUpdater();
+
   createWindow();
 });
 
-// IMAGES:
-imageBrightnessHandler();
-imageBlurringHandler();
-imageSaturationHandler();
-imageSharpnessHandler();
-imageCompressionHandler();
-imageNoiseHandler();
-imageConversionHandler();
-imageGrayscaleHandler();
-imageResizingHandler();
-imageBorderHandler();
-// imagePixelatingHandler();
-// VIDEOS
-changeFpsHandler();
-convertVideoHandler();
-compressVideoHandler();
-videoEqualizerHandler();
-videoPlaybackHandler();
-extractAudioHandler();
-trimVideoHandler();
-videoVolumeHandler();
-videoStabilizationHandler();
-videoPitchHandler();
-videoAudioRemovingHandler();
-videoNoiseHandler();
-// AUDIOS
-audioPitchHandler();
-audioVolumeHandler();
-audioSpeedHandler();
-audioOptimizeHandle();
-audioNormalizingHandler();
-audioReverseHandler();
-audioConvertingHandler();
-audioEchoHandler();
-audioFadingHandler();
-// OTHER
-setupAutoUpdater();
 
 ipcMain.handle('cancel-processing', (_, taskId: string) => {
   return { success: ffmpegManager.cancelProcess(taskId) };
