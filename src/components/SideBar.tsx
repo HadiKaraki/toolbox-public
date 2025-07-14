@@ -53,7 +53,7 @@ const SideBar = () => {
                 <Link 
                     key={"home-page"}
                     to="/"
-                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     <span className="text-xl mr-3">🧰</span>
                     <span className="font-medium">Home Page</span>
@@ -62,7 +62,7 @@ const SideBar = () => {
                     <Link 
                         key={category.id}
                         to={`/${category.id}/tools`}
-                        className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
                         <span className="text-xl mr-3">{category.icon}</span>
                         <span className="font-medium">{category.name}</span>
@@ -71,7 +71,7 @@ const SideBar = () => {
                 <Link 
                     key={"favorites-page"}
                     to="/favorites"
-                    className="flex border-b text-white hover:text-black hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     <span className="text-xl mr-3">❤️</span>
                     <span className="font-medium">Favoite Tools</span>
@@ -79,14 +79,14 @@ const SideBar = () => {
                 <Link 
                     key={"update-link"}
                     to='/update'
-                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     <span className="text-xl mr-3">⬇️</span>
                     <span className="font-medium">Update</span>
                 </Link>
                 <button 
                     onClick={onClick} 
-                    className="flex border-b w-full hover:text-black text-white hover:cursor-pointer border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="flex border-b w-full hover:text-black text-white hover:cursor-pointer border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
                     {theme === 'light' ? (
                         <>

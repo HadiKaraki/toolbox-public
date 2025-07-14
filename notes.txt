@@ -7,6 +7,10 @@ audio spectrogram
 audio equalizer
 audio fading backend (?)
 
+For speeding up videos or audios, the process is completing before the progress gets to 100%,
+because the duration of the new video or audio (if the playback is increases not decreased) would
+be less than the original
+
 remove this when cancelling a process and keep the Process Cancled message:
 Processing failed: ffmpeg was killed with signal SIGTERM
 

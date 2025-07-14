@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 old_icons
+old_release.txt
+notes.txt
 
 # Electron
 dist/

@@ -3,6 +3,10 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "net.toolbox.hadikaraki",
   "asar": true,
+  "asarUnpack": [
+    "**/ffmpeg/*",
+    "**/ffprobe/*"
+  ],
   "compression": "maximum",
   "npmRebuild": false,
   "nodeGypRebuild": false,
@@ -21,17 +25,17 @@
   "files": [
     "dist",
     "dist-electron",
-    "node_modules/@ffmpeg-installer/win32-x64/ffmpeg.exe",
-    "node_modules/@ffprobe-installer/win32-x64/ffprobe.exe"
+    "!node_modules/@ffmpeg-installer/**/*",
+    "!node_modules/@ffprobe-installer/**/*"
   ],
   "extraResources": [
     {
-      "from": "node_modules/@ffmpeg-installer/win32-x64",
-      "to": "ffmpeg"
+      "from": "node_modules/@ffmpeg-installer/win32-x64/ffmpeg.exe",
+      "to": "ffmpeg/ffmpeg.exe"
     },
     {
-      "from": "node_modules/@ffprobe-installer/win32-x64",
-      "to": "ffprobe"
+      "from": "node_modules/@ffprobe-installer/win32-x64/ffprobe.exe",
+      "to": "ffprobe/ffprobe.exe"
     }
   ],
   "mac": {

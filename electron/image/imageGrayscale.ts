@@ -18,12 +18,17 @@ export async function adjustGrayscale({ inputPath, outputPath, grayscale }: Gray
     // const format = await getFormatNameForImages(inputPath);
     // const muxer = getMuxersOfImages(format);
 
+    const grayscaleForffmpeg = 1 - grayscale; // grayscale value of ffmpeg is opposite of css
+
     await new Promise<void>((resolve, reject) => {
       ffmpeg(inputPath)
         .inputOptions('-framerate 1')
-        .videoFilters(`hue=s=${grayscale}`)
+        .videoFilters(`hue=s=${grayscaleForffmpeg}`)
         .outputFormat("mjpeg")
         .output(outputPath)
+        .on('start', (commandLine) => {
+                    console.log('FFmpeg command:', commandLine);
+                })
         .on('end', (stderr: string | null) => {
           if (stderr) {
             reject(new Error(stderr));

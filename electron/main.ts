@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain,  } from 'electron'
 import { fileURLToPath } from 'node:url'
 import { ffmpegManager } from './ffmpegManager';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
@@ -6,8 +6,6 @@ import ffprobePath from '@ffprobe-installer/ffprobe';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import path from 'node:path'
 import fs from 'fs/promises'; // Using promises API for cleaner async code
-
-// IMAGES
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -20,10 +18,12 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 function configureFfmpeg() {
-  if (process.env.NODE_ENV === 'development') {
+  if (!app.isPackaged) {
+    // Development paths
     fluentFfmpeg.setFfmpegPath(ffmpegPath.path);
     fluentFfmpeg.setFfprobePath(ffprobePath.path);
   } else {
+    // Production paths - use resources directory
     fluentFfmpeg.setFfmpegPath(
       path.join(process.resourcesPath, 'ffmpeg', 'ffmpeg.exe')
     );
@@ -58,7 +58,7 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 
-  Menu.setApplicationMenu(null);
+  // Menu.setApplicationMenu(null);
 
   return win;
 }
