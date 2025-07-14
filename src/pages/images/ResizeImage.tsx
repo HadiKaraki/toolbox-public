@@ -153,7 +153,7 @@ export default function ResizeImage() {
     };
 
     const handleHeightChange = (value: number) => {
-        if (!value) value = 24;
+        // if (!value) value = 24;
         if (value > 4000) {
             setHeight(4000);
         } else {
@@ -162,7 +162,7 @@ export default function ResizeImage() {
     };
 
     const handleWidthChange = (value: number) => {
-        if (!value) value = 24;
+        // if (!value) value = 24;
         if (value > 6000) {
             setWidth(6000);
         } else {
@@ -171,7 +171,7 @@ export default function ResizeImage() {
     }
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl max-w-6xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
         <BackToImageTools
           title={"Resize Image"}

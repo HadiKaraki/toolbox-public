@@ -9,10 +9,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
 export default function OptimizeForMode() {
-    const { audioFile, setAudioFile } = useAudioContext();
+    const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
     const [audioURL, setAudioURL] = useState(undefined);
     const [mode, setMode] = useState("standard");
-    const [audioMetadata, setAudioMetadata] = useState({name: '', duration: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -92,6 +91,9 @@ export default function OptimizeForMode() {
         const newTaskId = Math.random().toString(36).substring(2, 15);
         setTaskId(newTaskId);
         setProgress(0);
+        setCompletedMsg(null);
+        setCancelMsg(null)
+        setError(null);
 
         try {
             const arrayBuffer = await audioFile.arrayBuffer();
@@ -130,6 +132,8 @@ export default function OptimizeForMode() {
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Processing failed');
+        } finally {
+            setProgress(0);
         }
     };
 

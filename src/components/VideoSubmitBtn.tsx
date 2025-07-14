@@ -37,7 +37,7 @@ const VideoSubmitBtn: React.FC<VideoSubmitBtnProps> = ({
       {cancelMsg && <span className="text-orange-400 font-bold block">{cancelMsg}</span>}
 
       {/* CANCEL BTN */}
-      {progress === 0 && (
+      {progress > 0 && (
         <button
           onClick={() => handleCancel(taskId, setTaskId, setCancelMsg)}
           className="w-full mt-3 flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-red-500 hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"

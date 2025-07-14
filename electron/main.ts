@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain,  } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { fileURLToPath } from 'node:url'
 import { ffmpegManager } from './ffmpegManager';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
@@ -58,7 +58,7 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 
-  // Menu.setApplicationMenu(null);
+  Menu.setApplicationMenu(null);
 
   return win;
 }

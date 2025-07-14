@@ -297,9 +297,10 @@ interface Window {
       message?: string;
     }>;
 
+    // Progress management
     onProgress: (callback: (taskId: string, progress: number) => void) => void;
     removeProgressListener: () => void;
-    startProcessing: (args: { taskId: string; inputPath: string; outputPath: string }) => Promise<{ success: boolean; message?: string }>;
+    // startProcessing: (args: { taskId: string; inputPath: string; outputPath: string }) => Promise<{ success: boolean; message?: string }>;
     cancelProcessing: (taskId: string) => Promise<{ success: boolean; message?: string }>;
 
     // AUTO UPDATES

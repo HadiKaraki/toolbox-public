@@ -5,10 +5,9 @@ import BackToAudioTools from "../../components/BackToAudioTools";
 import { useAudioContext } from "../../contexts/AudioContext";
 
 export default function ModifyAudioPitch() {
-    const { audioFile, setAudioFile } = useAudioContext();
+    const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
     const [audioURL, setAudioURL] = useState(undefined);
     const [pitch, setPitch] = useState(1);
-    const [audioMetadata, setAudioMetadata] = useState({name: '', duration: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -88,6 +87,9 @@ export default function ModifyAudioPitch() {
         const newTaskId = Math.random().toString(36).substring(2, 15);
         setTaskId(newTaskId);
         setProgress(0);
+        setCompletedMsg(null);
+        setCancelMsg(null)
+        setError(null);
 
         try {
             const arrayBuffer = await audioFile.arrayBuffer();
@@ -126,6 +128,8 @@ export default function ModifyAudioPitch() {
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Processing failed');
+        } finally {
+            setProgress(0);
         }
     };
 

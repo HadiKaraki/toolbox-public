@@ -5,14 +5,12 @@ import VideoSubmitBtn from "../../components/VideoSubmitBtn";
 import BackToVideoTools from "../../components/BackToVideoTools";
 
 export default function TrimVideo() {
-    const { videoFile, setVideoFile } = useVideoContext();
+    const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
     const [videoURL, setVideoURL] = useState(undefined);
     // const videoRef = useRef(null);
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
-    const [videoDuration, setVideoDuration] = useState(0);
     const [startGreaterThanEnd, setStartGreaterThanEnd] = useState(false);
-    const [videoMetadata, setVideoMetadata] = useState({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -67,7 +65,6 @@ export default function TrimVideo() {
               format: videoFile.type.split('/')[1].toUpperCase(),
               size: (videoFile.size / (1024 * 1024)).toFixed(1)
           });
-          setVideoDuration(video.duration);
         };
 
         return () => {
@@ -84,14 +81,14 @@ export default function TrimVideo() {
         } else if(start >= end) {
             setError('Start time must be less than end time.');
             setStartGreaterThanEnd(true);
-        } else if (end > videoDuration) {
-            setError(`End time exceeds video duration (${secondsToHHMMSS(videoDuration)}).`);
+        } else if (end > videoMetadata.duration) {
+            setError(`End time exceeds video duration (${secondsToHHMMSS(videoMetadata.duration)}).`);
             setStartGreaterThanEnd(true);
         } else {
             setError('');
             setStartGreaterThanEnd(false);
         }
-    }, [startTime, endTime, videoDuration]);
+    }, [startTime, endTime, videoMetadata.duration]);
 
     // progress tacking
     useEffect(() => {
@@ -150,6 +147,9 @@ export default function TrimVideo() {
       const newTaskId = Math.random().toString(36).substring(2, 15);
       setTaskId(newTaskId);
       setProgress(0);
+      setCompletedMsg(null);
+      setCancelMsg(null)
+      setError(null);
 
       try {
         const arrayBuffer = await videoFile.arrayBuffer();
@@ -180,10 +180,17 @@ export default function TrimVideo() {
         if (result.success) {
             setCompletedMsg(result.message);
         } else {
-            throw new Error(result.message);
+            if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
+              setCancelMsg("Processing cancelled");
+            } else {
+              setError(result.message);
+              throw new Error(result.message);
+            }
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
+      } finally {
+        setProgress(0);
       }
     };
 
@@ -237,7 +244,7 @@ export default function TrimVideo() {
                         </div>
                         <div>
                             <label className="block dark:text-gray-400 text-sm font-medium mb-2">End Time (hh:mm:ss)</label>
-                            <label className={`block text-sm dark:text-gray-400 font-light mb-2 ${!videoFile ? 'hidden' : ''}`}>Video Duration: {secondsToHHMMSS(videoDuration)}</label>
+                            <label className={`block text-sm dark:text-gray-400 font-light mb-2 ${!videoFile ? 'hidden' : ''}`}>Video Duration: {secondsToHHMMSS(videoMetadata.duration)}</label>
                             <input
                                 type="text"
                                 value={endTime}

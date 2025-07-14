@@ -80,7 +80,7 @@ const AudioDisplay: React.FC<AudioDisplayProps> = ({
 
             {audioMetadata && (
               <div className="text-sm text-gray-600 space-x-4 flex">
-                <span className="dark:text-gray-400">Size: {(parseInt(audioMetadata.size) / 1000000).toFixed(3)} MB</span>
+                <span className="dark:text-gray-400">Size: {(parseFloat(audioMetadata.size)).toFixed(3)} MB</span>
               </div>
             )}
           </div>

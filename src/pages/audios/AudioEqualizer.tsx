@@ -9,13 +9,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
 export default function AudioEqualizer() {
-    const { audioFile, setAudioFile } = useAudioContext();
+    const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
     const [audioURL, setAudioURL] = useState(undefined);
     const [equalizeMode, setEqualizeMode] = useState('');
     const [frequency, setFrequency] = useState(1000);
     const [bandwidth, setBandwidth] = useState(500);
     const [gain, setGain] = useState(0);
-    const [audioMetadata, setAudioMetadata] = useState({name: '', duration: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -140,6 +139,9 @@ export default function AudioEqualizer() {
         const newTaskId = Math.random().toString(36).substring(2, 15);
         setTaskId(newTaskId);
         setProgress(0);
+        setCompletedMsg(null);
+        setCancelMsg(null)
+        setError(null);
 
         try {
             const arrayBuffer = await audioFile.arrayBuffer();
@@ -180,6 +182,8 @@ export default function AudioEqualizer() {
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Processing failed');
+        } finally {
+            setProgress(0);
         }
     };
 

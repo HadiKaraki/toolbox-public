@@ -76,7 +76,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     })
   },
   removeProgressListener: () => ipcRenderer.removeAllListeners('ffmpeg-progress'),
-  startProcessing: (args: any) => ipcRenderer.invoke('start-processing', args),
+  // startProcessing: (args: any) => ipcRenderer.invoke('start-processing', args),
   cancelProcessing: (taskId: string) => ipcRenderer.invoke('cancel-processing', taskId),
 
   // AUTO UPDATES

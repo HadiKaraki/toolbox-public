@@ -1,0 +1,19 @@
+video quality
+video converting not working (keeping it mp4)
+
+audio trimming
+audio silence remover
+audio spectrogram
+audio equalizer
+audio fading backend (?)
+
+remove this when cancelling a process and keep the Process Cancled message:
+Processing failed: ffmpeg was killed with signal SIGTERM
+
+for tagging new releases:
+- first the package version should be the same as the tag
+- git add .
+- git commit -m "message"
+- git push origin main
+- git tag v(x.x.x)
+- gut push origin v(x.x.x)

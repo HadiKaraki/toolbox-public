@@ -5,10 +5,9 @@ import VideoSubmitBtn from "../../components/VideoSubmitBtn";
 import BackToVideoTools from "../../components/BackToVideoTools";
 
 export default function ExtractAudioVideo() {
-    const { videoFile, setVideoFile } = useVideoContext();
+    const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
     const [videoURL, setVideoURL] = useState(undefined);
     // const videoRef = useRef(null);
-    const [videoMetadata, setVideoMetadata] = useState({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [audioFormat, setAudioFormat] = useState('mp3');
     const [audioQuality, setAudioQuality] = useState(320);
@@ -88,6 +87,9 @@ export default function ExtractAudioVideo() {
       const newTaskId = Math.random().toString(36).substring(2, 15);
       setTaskId(newTaskId);
       setProgress(0);
+      setCompletedMsg(null);
+      setCancelMsg(null)
+      setError(null);
 
       try {
         const arrayBuffer = await videoFile.arrayBuffer();
@@ -117,10 +119,17 @@ export default function ExtractAudioVideo() {
         if (result.success) {
             setCompletedMsg(result.message);
         } else {
-            throw new Error(result.message);
+            if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
+              setCancelMsg("Processing cancelled");
+            } else {
+              setError(result.message);
+              throw new Error(result.message);
+            }
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
+      } finally {
+        setProgress(0);
       }
     };
 

@@ -34,7 +34,10 @@ export async function fadeAudio(
           const seconds = h * 3600 + m * 60 + s;
           if (seconds >= 0) {
             const percent = Math.min(100, (seconds / duration) * 100);
-            event.sender.send('ffmpeg-progress', { percent });
+            event.sender.send('ffmpeg-progress', { 
+              taskId,
+              progress: percent
+            });
           }
         })
         // .on('start', cmd => console.log('FFmpeg command:', cmd))

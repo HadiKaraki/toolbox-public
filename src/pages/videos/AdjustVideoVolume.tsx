@@ -5,10 +5,9 @@ import BackToVideoTools from "../../components/BackToVideoTools";
 import { useVideoContext } from "../../contexts/VideoContext";
 
 export default function AdjustVideoVolume() {
-    const { videoFile, setVideoFile } = useVideoContext();
+    const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
     const [videoURL, setVideoURL] = useState(undefined);
     const [volume, setVolume] = useState(1);
-    const [videoMetadata, setVideoMetadata] = useState({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -86,6 +85,9 @@ export default function AdjustVideoVolume() {
       const newTaskId = Math.random().toString(36).substring(2, 15);
       setTaskId(newTaskId);
       setProgress(0);
+      setCompletedMsg(null);
+      setCancelMsg(null)
+      setError(null);
 
       try {
         const arrayBuffer = await videoFile.arrayBuffer();
@@ -124,6 +126,8 @@ export default function AdjustVideoVolume() {
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
+      } finally {
+        setProgress(0);
       }
     };
 

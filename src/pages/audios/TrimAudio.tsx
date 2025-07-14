@@ -5,13 +5,11 @@ import BackToAudioTools from "../../components/BackToAudioTools";
 import { useAudioContext } from "../../contexts/AudioContext";
 
 export default function TrimAudio() {
-    const { audioFile, setAudioFile } = useAudioContext();
+    const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
     const [audioURL, setAudioURL] = useState(undefined);
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
-    const [audioDuration, setAudioDuration] = useState(0);
     const [startGreaterThanEnd, setStartGreaterThanEnd] = useState(false);
-    const [audioMetadata, setAudioMetadata] = useState({name: '', duration: 0, format: 'mp4', size: '0'});
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -68,7 +66,6 @@ export default function TrimAudio() {
                 format: audioFile.type.split('/')[1]?.toUpperCase() || 'UNKNOWN',
                 size: (audioFile.size / (1024 * 1024)).toFixed(1) + 'MB'
             });
-            setAudioDuration(audio.duration);
         };
 
         return () => {
@@ -85,14 +82,14 @@ export default function TrimAudio() {
         } else if (start >= end) {
           setError('Start time must be less than end time.');
           setStartGreaterThanEnd(true);
-        } else if (end > audioDuration) {
-          setError(`End time exceeds audio duration (${secondsToHHMMSS(audioDuration)}).`);
+        } else if (end > audioMetadata.duration) {
+          setError(`End time exceeds audio duration (${secondsToHHMMSS(audioMetadata.duration)}).`);
           setStartGreaterThanEnd(true);
         } else {
           setError('');
           setStartGreaterThanEnd(false);
         }
-    }, [startTime, endTime, audioDuration]);
+    }, [startTime, endTime, audioMetadata.duration]);
 
     // progress tacking
     useEffect(() => {
@@ -124,6 +121,9 @@ export default function TrimAudio() {
       const newTaskId = Math.random().toString(36).substring(2, 15);
       setTaskId(newTaskId);
       setProgress(0);
+      setCompletedMsg(null);
+      setCancelMsg(null)
+      setError(null);
 
       try {
         const arrayBuffer = await audioFile.arrayBuffer();
@@ -163,6 +163,8 @@ export default function TrimAudio() {
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
+      } finally {
+        setProgress(0);
       }
     };
 
@@ -243,7 +245,7 @@ export default function TrimAudio() {
                     </div>
                     <div>
                         <label className="block dark:text-gray-400 text-sm font-medium mb-2">End Time (hh:mm:ss)</label>
-                        <label className={`block text-sm dark:text-gray-400 font-light mb-2 ${!audioFile ? 'hidden' : ''}`}>Audio Duration: {secondsToHHMMSS(audioDuration)}</label>
+                        <label className={`block text-sm dark:text-gray-400 font-light mb-2 ${!audioFile ? 'hidden' : ''}`}>Audio Duration: {secondsToHHMMSS(audioMetadata.duration)}</label>
                         <input
                             type="text"
                             value={endTime}

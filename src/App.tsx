@@ -16,7 +16,7 @@ import SaturationImage from './pages/images/SaturationImage';
 import ConvertImage from './pages/images/ConvertImage';
 import PixelateImage from './pages/images/PixelateImage';
 import VideoTools from './pages/videos/VideoTools';
-import UpdateManager from './components/UpdateManager';
+import UpdateManager from './pages/UpdateManager';
 import ChangeFps from './pages/videos/ChangeFps';
 import AdjustVideoVolume from './pages/videos/AdjustVideoVolume';
 import CompressVideo from './pages/videos/CompressVideo';
