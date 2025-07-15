@@ -58,6 +58,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   reverseAudio: (args: any) => ipcRenderer.invoke('audio-reverse', args),
   convertAudio: (args: any) => ipcRenderer.invoke('audio-convert', args),
   addEchoAudio: (args: any) => ipcRenderer.invoke('audio-echo', args),
+  generateSpectrogram: (args: any) => ipcRenderer.invoke('audio-spectrogram', args),
+  silenceRemover: (args: any) => ipcRenderer.invoke('audio-silence-remover', args),
 
   // REST:
   createTempFile: (data: ArrayBuffer, extension: string) => 

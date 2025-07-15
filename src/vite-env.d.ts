@@ -237,6 +237,13 @@ interface Window {
       pitch: number;
     }) => Promise<{ success: boolean; message: string }>;
 
+    generateSpectrogram: (args: {
+      inputPath: string;
+      outputPath: string;
+      taskId: string;
+      duration: number;
+    }) => Promise<{ success: boolean; message: string }>;
+
     optimizeAudioForMode: (args: {
       inputPath: string;
       outputPath: string;
@@ -253,6 +260,15 @@ interface Window {
       frequency: number;
       bandwidth: number;
       gain: number;
+    }) => Promise<{ success: boolean; message: string }>;
+
+    silenceRemover: (args: {
+      inputPath: string;
+      outputPath: string;
+      taskId: string;
+      duration: number;
+      period: number;
+      silenceDuration: number;
     }) => Promise<{ success: boolean; message: string }>;
 
     normalizeAudio: (args: {

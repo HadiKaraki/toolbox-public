@@ -44,6 +44,8 @@ import FavoriteTools from './pages/FavoriteTools';
 import AddEcho from './pages/audios/AddEcho';
 import AddNoiseVideo from './pages/videos/AddNoiseVideo';
 import FadeInOut from './pages/audios/FadeInOut';
+import GenerateSpectrogram from './pages/audios/GenerateSpectrogram';
+import SilenceRemover from './pages/audios/SilenceRemover';
 
 function App() {
   return (
@@ -97,6 +99,8 @@ function App() {
           <Route path="/audio/trim" element={<TrimAudio />} />
           <Route path="/audio/fade" element={<FadeInOut />} />
           <Route path="/audio/echo" element={<AddEcho />} />
+          <Route path="/audio/spectrogram" element={<GenerateSpectrogram />} />
+          <Route path="/audio/silence-remover" element={<SilenceRemover />} />
 
           {/* Other */}
           <Route path="/update" element={<UpdateManager />} />

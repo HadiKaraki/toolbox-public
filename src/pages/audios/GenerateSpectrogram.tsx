@@ -4,11 +4,9 @@ import AudioSubmitBtn from "../../components/AudioSubmitBtn";
 import BackToAudioTools from "../../components/BackToAudioTools";
 import { useAudioContext } from "../../contexts/AudioContext";
 
-export default function SilenceRemover() {
+export default function GenerateSpectrogram() {
     const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
     const [audioURL, setAudioURL] = useState(undefined);
-    const [period, setPeriod] = useState(1);
-    const [silenceDuration, setSilenceDuration] = useState(0.5);
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
     const [taskId, setTaskId] = useState<string | null>(null);
@@ -102,20 +100,18 @@ export default function SilenceRemover() {
         }
 
         const originalName = audioFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_silence_removed.${extension}`;
+        const outputFilename = `${originalName}_spectrogram.png`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
           throw new Error('Save canceled by user');
         }
 
-        const result = await window.electronAPI.silenceRemover({
+        const result = await window.electronAPI.generateSpectrogram({
             inputPath: tempResult.path,
             outputPath,
             taskId: newTaskId,
             duration: audioMetadata.duration,
-            period,
-            silenceDuration
         });
 
         if (result.success) {
@@ -150,8 +146,8 @@ export default function SilenceRemover() {
         <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToAudioTools
-            title={"Silence Remover"}
-            description={"Automatically detect and remove silent parts"}
+            title={"Spectrogram Generator"}
+            description={"Generate visual frequency analysis"}
           />
       
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -167,63 +163,11 @@ export default function SilenceRemover() {
             />
             {/* Controls Section */}
             <div className="bg-white dark:bg-gray-800 dark:border-gray-700 rounded-lg shadow-md p-6 border border-gray-200">
-                <h2 className="text-xl dark:text-white font-semibold mb-4 text-gray-700">Silence detecting settings</h2>
-                <div className="space-y-4">
-                    <div>
-                        <div className="flex justify-between mb-2">
-                            <label htmlFor="brightnessRange" className="block dark:text-gray-400 text-sm font-medium text-gray-700">
-                                Period
-                            </label>
-                            <span className="text-sm dark:text-gray-400 font-semibold text-blue-600">
-                                {period}
-                            </span>
-                        </div>
-                        <input
-                            id="periodRange"
-                            type="range"
-                            min="1"
-                            max="5"
-                            step="1"
-                            value={period}
-                            onChange={(e) => setPeriod(parseFloat(e.target.value))}
-                            disabled={!audioFile}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer disabled:opacity-50"
-                        />
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>Min</span>
-                            <span>Max</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between mb-2">
-                            <label htmlFor="brightnessRange" className="block dark:text-gray-400 text-sm font-medium text-gray-700">
-                                Silence Duration
-                            </label>
-                            <span className="text-sm dark:text-gray-400 font-semibold text-blue-600">
-                                {silenceDuration.toFixed(1)}s
-                            </span>
-                        </div>
-                        <input
-                            id="periodRange"
-                            type="range"
-                            min="0.1"
-                            max="2"
-                            step="0.1"
-                            value={silenceDuration}
-                            onChange={(e) => setSilenceDuration(parseFloat(e.target.value))}
-                            disabled={!audioFile}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer disabled:opacity-50"
-                        />
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>Min</span>
-                            <span>Max</span>
-                        </div>
-                    </div>
-                </div>
+                <h2 className="text-xl dark:text-white font-semibold mb-4 text-gray-700">Generate Spectrogram</h2>
                 {/* Process Button */}
                 <AudioSubmitBtn
-                    btnTitle={"Remove Silence & Download"}
-                    progressTitle={"Removing silence..."}
+                    btnTitle={"Generate Spectogram & Download"}
+                    progressTitle={"Generating spectogram..."}
                     completedMsg={completedMsg}
                     error={error}
                     cancelMsg={cancelMsg}
@@ -237,35 +181,31 @@ export default function SilenceRemover() {
                 />
 
                 <div className="bg-blue-50 dark:bg-gray-900/60 p-4 rounded-lg">
-                    <h3 className="text-sm dark:text-white font-medium text-blue-800 mb-2">Audio Conversion Tips</h3>
+                    <h3 className="text-sm dark:text-white font-medium text-blue-800 mb-2">Spectrogram Tips</h3>
                     <ul className="text-xs dark:text-gray-300 text-blue-700 space-y-2">
                         <li className="flex items-start">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <span>
-                                <strong>Period</strong> is the number of times silence of a certain duration must occur before it's removed.
-                            </span>
+                            <span>A <strong>spectrogram</strong> is a visual representation of the spectrum of frequencies in an audio signal as it varies over time.</span>
                         </li>
                         <li className="flex items-start">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <span>
-                                <strong>Silence Duration</strong> is the minimum length of each silence segment (in seconds) to count as one period.
-                            </span>
+                            <span><strong>X-axis</strong>: Time — shows how the audio evolves</span>
                         </li>
                         <li className="flex items-start">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <span>
-                                For example, with audio like <code>[ silence 0.6s ][ sound 0.1s ][ silence 0.6s ]</code>:
-                                <ul className="ml-4 dark:text-gray-300 list-disc text-[11px] mt-1 space-y-1 text-blue-700">
-                                    <li><strong>Period=1, Silence Duration=1</strong> – Does <em>not</em> remove, because there's no single 1s silence.</li>
-                                    <li><strong>Period=2, Silence Duration=0.5</strong> – Works! It detects two 0.5s silent periods.</li>
-                                </ul>
-                            </span>
+                            <span><strong>Y-axis</strong>: Frequency — from low (bottom) to high (top)</span>
+                        </li>
+                        <li className="flex items-start">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span><strong>Color</strong>: Represents amplitude or intensity — brighter colors mean louder sounds</span>
                         </li>
                     </ul>
                 </div>

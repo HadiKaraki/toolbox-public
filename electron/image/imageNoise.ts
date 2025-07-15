@@ -1,10 +1,6 @@
 import { ipcMain } from 'electron';
-import ffmpeg from 'fluent-ffmpeg';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import ffmpeg from '../ffmpegConfig';
 // import { getFormatNameForImages, getMuxersOfImages } from '../getMetadataFfprobe';
-
-// Set FFmpeg path
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 interface NoiseAdjustmentArgs {
   inputPath: string;

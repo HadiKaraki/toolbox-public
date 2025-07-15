@@ -25,17 +25,19 @@
   "files": [
     "dist",
     "dist-electron",
-    "!node_modules/@ffmpeg-installer/**/*",
-    "!node_modules/@ffprobe-installer/**/*"
+    "!node_modules/@ffmpeg-installer",
+    "!node_modules/@ffprobe-installer"
   ],
   "extraResources": [
     {
       "from": "node_modules/@ffmpeg-installer/win32-x64/ffmpeg.exe",
-      "to": "ffmpeg/ffmpeg.exe"
+      "to": "ffmpeg/ffmpeg.exe",
+      "filter": ["**/*"]
     },
     {
       "from": "node_modules/@ffprobe-installer/win32-x64/ffprobe.exe",
-      "to": "ffprobe/ffprobe.exe"
+      "to": "ffprobe/ffprobe.exe",
+      "filter": ["**/*"]
     }
   ],
   "mac": {

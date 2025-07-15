@@ -26,9 +26,6 @@ export async function adjustGrayscale({ inputPath, outputPath, grayscale }: Gray
         .videoFilters(`hue=s=${grayscaleForffmpeg}`)
         .outputFormat("mjpeg")
         .output(outputPath)
-        .on('start', (commandLine) => {
-                    console.log('FFmpeg command:', commandLine);
-                })
         .on('end', (stderr: string | null) => {
           if (stderr) {
             reject(new Error(stderr));

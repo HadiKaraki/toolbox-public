@@ -1,6 +1,8 @@
 // utils/ffmpeg.ts
+import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
-import ffprobeInstaller from '@ffprobe-installer/ffprobe';
+import { fileURLToPath } from 'node:url';
+import { app } from 'electron';
 import { FfprobeData } from 'fluent-ffmpeg';
 
 // Type Definitions
@@ -34,8 +36,23 @@ function isAudioFormat(format: string): format is AudioFormat {
   return audioFormats.includes(format as AudioFormat);
 }
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 // Initialize FFmpeg
-ffmpeg.setFfprobePath(ffprobeInstaller.path);
+function getFfprobePath() {
+  if (!app.isPackaged) {
+    // DEVELOPMENT: Absolute path to node_modules
+    return path.join(
+      __dirname,
+      '../node_modules/@ffprobe-installer/win32-x64/ffprobe.exe'
+    );
+  } else {
+    // PRODUCTION: Unpacked binary
+    return path.join(process.resourcesPath, 'ffprobe', 'ffprobe.exe');
+  }
+}
+
+ffmpeg.setFfprobePath(getFfprobePath());
 
 /**
  * Get the format name of a file using FFprobe
