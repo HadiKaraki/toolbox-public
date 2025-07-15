@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useVideoContext } from "../../contexts/VideoContext";
+import { useProgressContext } from "../../contexts/ProgressContext";
 import VideoDisplay from "../../components/VideoDisplay";
 import VideoSubmitBtn from "../../components/VideoSubmitBtn";
 import BackToVideoTools from "../../components/BackToVideoTools";
@@ -17,10 +18,19 @@ export default function EqualizeVideoAudio() {
     const [bandwidth, setBandwidth] = useState(500);
     const [gain, setGain] = useState(0);
     const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState<number>(0);
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+    const { 
+        tasks, 
+        addTask, 
+        removeTask, 
+        getTaskIdByName,
+        updateProgress
+    } = useProgressContext();
+
+    const currentTaskId = getTaskIdByName("Equalizing Video Audio");
+    const currentTask = currentTaskId ? tasks[currentTaskId] : null;
+    const progress = currentTask?.progress || 0;
 
     const handleEqualizeMode = (value: string) => {
         switch (value) {
@@ -95,18 +105,6 @@ export default function EqualizeVideoAudio() {
         };
     }, [videoFile]);
 
-    // progress tacking
-    useEffect(() => {
-      const progressHandler = (id: string, progress: number) => {
-        if (id === taskId) setProgress(progress);
-        console.log("inside progress handler", progress)
-      };
-      window.electronAPI.onProgress(progressHandler);
-      return () => {
-        window.electronAPI.removeProgressListener();
-      };
-    }, [taskId]);
-
     const handleRemoveVideo = () => {
         setVideoFile(null);
         setVideoURL(undefined);
@@ -133,14 +131,13 @@ export default function EqualizeVideoAudio() {
     }, [frequency, bandwidth, gain]);
 
    const handleProcessing = async () => {
-      if (!videoFile) return;
-      
-      const newTaskId = Math.random().toString(36).substring(2, 15);
-      setTaskId(newTaskId);
-      setProgress(0);
-      setCompletedMsg(null);
-      setCancelMsg(null)
-      setError(null);
+        if (!videoFile) return;
+        
+        const newTaskId = Math.random().toString(36).substring(2, 15);
+        addTask(newTaskId, "Equalizing Video Audio", '/video/equalizer');
+        setCompletedMsg(null);
+        setCancelMsg(null);
+        setError(null);
 
       try {
         const arrayBuffer = await videoFile.arrayBuffer();
@@ -156,7 +153,8 @@ export default function EqualizeVideoAudio() {
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
-          throw new Error('Save canceled by user');
+            removeTask(newTaskId);
+            throw new Error('Save canceled by user');
         }
 
         const result = await window.electronAPI.equalizeVideoAudio({
@@ -170,6 +168,7 @@ export default function EqualizeVideoAudio() {
         });
 
         if (result.success) {
+            removeTask(newTaskId);
             setCompletedMsg(result.message);
         } else {
             if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
@@ -181,24 +180,26 @@ export default function EqualizeVideoAudio() {
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
-      } finally {
-        setProgress(0);
+          if (newTaskId) removeTask(newTaskId);
       }
     };
 
     const handleCancel = async () => {
+        const taskId = getTaskIdByName("Equalizing Video Audio");
         if (!taskId) return;
+        
         const { success } = await window.electronAPI.cancelProcessing(taskId);
         if (success) {
-          setCancelMsg('Processing cancelled');
-        }
-        else {
-          setCancelMsg('Error canceling');
+            setCancelMsg('Processing cancelled');
+            removeTask(taskId);
+            updateProgress(taskId, 0); // Reset progress on cancel
+        } else {
+            setCancelMsg('Error canceling');
         }
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToVideoTools
               title={"Video Audio Equalizer"}
@@ -332,8 +333,7 @@ export default function EqualizeVideoAudio() {
                     handleProcessing={handleProcessing}
                     videoFile={videoFile}
                     progress={progress}
-                    taskId={taskId}
-                    setTaskId={setTaskId}
+                    taskId={currentTaskId}
                 />
       
                 {/* Tips Section */}

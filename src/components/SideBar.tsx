@@ -29,7 +29,7 @@ const toolCategories = [
 const SideBar = () => {
     const theme = useSelector((state: { theme: { mode: any; }; }) => state.theme.mode);
     const dispatch = useDispatch();
-    const { taskId, name: progressName, pageLink, progress } = useProgressContext();
+    const { tasks } = useProgressContext();
 
     useLayoutEffect(() => {
         document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -110,16 +110,16 @@ const SideBar = () => {
                         </>
                     )}
                 </button>
-                {pageLink && taskId &&
-                <Link 
-                    key={"progress-link"}
-                    to={pageLink}
-                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                    <span className="text-lg mr-3">{progressName}</span>
-                    {`${Math.round(progress)}%`}
-                </Link>
-                }
+                {Object.entries(tasks).map(([taskId, task]) => (
+                    <Link 
+                        key={taskId}
+                        to={task.pageLink}
+                        className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        <span className="text-base mr-3">{task.name}</span>
+                        {`${Math.round(task.progress)}%`}
+                    </Link>
+                ))}
             </nav>
         </div>
     )

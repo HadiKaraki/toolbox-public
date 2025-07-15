@@ -11,11 +11,20 @@ export default function ChangeFps() {
     // const videoRef = useRef(null);
     const [fps, setFps] = useState(30);
     const [error, setError] = useState<string | null>(null);
-    // const [progress, setProgress] = useState<number>(0);
-    // const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
-    const { taskId, setTaskId, setName, setPageLink, progress, setProgress } = useProgressContext();
+    const { 
+        tasks, 
+        addTask, 
+        removeTask, 
+        getTaskIdByName,
+        updateProgress
+    } = useProgressContext();
+
+    // Get the current task ID and progress
+    const currentTaskId = getTaskIdByName("Changing FPS");
+    const currentTask = currentTaskId ? tasks[currentTaskId] : null;
+    const progress = currentTask?.progress || 0;
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -70,70 +79,70 @@ export default function ChangeFps() {
         // }
     };
 
-   const handleProcessing = async () => {
-      if (!videoFile) return;
-      
-      const newTaskId = Math.random().toString(36).substring(2, 15);
-      setTaskId(newTaskId);
-      setName("Changing FPS")
-      setPageLink("/video/frame-rate")
-      setCompletedMsg(null);
-      setCancelMsg(null)
-      setError(null);
-
-      try {
-        const arrayBuffer = await videoFile.arrayBuffer();
-        const extension = videoFile.name.split('.').pop() || '.mp4';
-        const tempResult = await window.electronAPI.createTempFile(arrayBuffer, extension);
+    const handleProcessing = async () => {
+        if (!videoFile) return;
         
-        if (!tempResult.success || !tempResult.path) {
-          throw new Error(tempResult.message || 'Failed to create temp file');
-        }
+        const newTaskId = Math.random().toString(36).substring(2, 15);
+        addTask(newTaskId, "Changing FPS", '/video/frame-rate');
+        setCompletedMsg(null);
+        setCancelMsg(null);
+        setError(null);
 
-        const originalName = videoFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_fps.${extension}`;
-        const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
-        
-        if (!outputPath) {
-          throw new Error('Save canceled by user');
-        }
-
-        const result = await window.electronAPI.adjustFps({
-            inputPath: tempResult.path,
-            outputPath,
-            taskId: newTaskId,
-            duration: videoMetadata.duration,
-            fps
-        });
-
-        if (result.success) {
-            setCompletedMsg(result.message);
-        } else {
-            if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
-              setCancelMsg("Processing cancelled");
-            } else {
-              setError(result.message);
-              throw new Error(result.message);
+        try {
+            const arrayBuffer = await videoFile.arrayBuffer();
+            const extension = videoFile.name.split('.').pop() || '.mp4';
+            const tempResult = await window.electronAPI.createTempFile(arrayBuffer, extension);
+            
+            if (!tempResult.success || !tempResult.path) {
+                throw new Error(tempResult.message || 'Failed to create temp file');
             }
+
+            const originalName = videoFile.name.replace(/\.[^/.]+$/, "");
+            const outputFilename = `${originalName}_fps.${extension}`;
+            const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
+            
+            if (!outputPath) {
+                removeTask(newTaskId);
+                throw new Error('Save canceled by user');
+            }
+
+            const result = await window.electronAPI.adjustFps({
+                inputPath: tempResult.path,
+                outputPath,
+                taskId: newTaskId,
+                duration: videoMetadata.duration,
+                fps
+            });
+
+            if (result.success) {
+                setCompletedMsg(result.message);
+                // Only remove task if you won't need to display completion status
+                removeTask(newTaskId);
+            } else {
+                if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
+                    setCancelMsg("Processing cancelled");
+                } else {
+                    setError(result.message);
+                    throw new Error(result.message);
+                }
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Processing failed');
+            if (newTaskId) removeTask(newTaskId);
         }
-      } catch (err) {
-          setError(err instanceof Error ? err.message : 'Processing failed');
-      } finally {
-        setTaskId(null);
-        setName(null);
-        setPageLink(null);
-        setProgress(0);
-      }
     };
 
     const handleCancel = async () => {
+        const taskId = getTaskIdByName("Changing FPS");
         if (!taskId) return;
+        
         const { success } = await window.electronAPI.cancelProcessing(taskId);
         if (success) {
-          setCancelMsg('Processing cancelled');
-        }
-        else {
-          setCancelMsg('Error canceling');
+            setCancelMsg('Processing cancelled');
+            removeTask(taskId);
+            updateProgress(taskId, 0); // Reset progress on cancel
+        } else {
+            setCancelMsg('Error canceling');
         }
     };
             
@@ -199,8 +208,7 @@ export default function ChangeFps() {
                     handleProcessing={handleProcessing}
                     videoFile={videoFile}
                     progress={progress}
-                    taskId={taskId}
-                    setTaskId={setTaskId}
+                    taskId={currentTaskId}
                 />
       
                 {/* Tips Section */}

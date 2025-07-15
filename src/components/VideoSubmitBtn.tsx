@@ -8,12 +8,11 @@ interface VideoSubmitBtnProps {
   error: string | null;
   cancelMsg: string | null;
   setCancelMsg: (msg: string | null) => void;
-  handleCancel: (taskId: string | null, setTaskId: (id: string | null) => void, setCancelMsg: (msg: string | null) => void) => void;
+  handleCancel: (taskId: string | null, setCancelMsg: (msg: string | null) => void) => void;
   handleProcessing: () => void;
   videoFile: File | null;
   progress: number;
   taskId: string | null;
-  setTaskId: (id: string | null) => void;
 }
 
 const VideoSubmitBtn: React.FC<VideoSubmitBtnProps> = ({
@@ -27,8 +26,7 @@ const VideoSubmitBtn: React.FC<VideoSubmitBtnProps> = ({
   handleProcessing,
   videoFile,
   progress,
-  taskId,
-  setTaskId
+  taskId
 }) => {
   return (
     <div className="pt-4 border-t border-gray-200">
@@ -39,7 +37,7 @@ const VideoSubmitBtn: React.FC<VideoSubmitBtnProps> = ({
       {/* CANCEL BTN */}
       {progress > 0 && (
         <button
-          onClick={() => handleCancel(taskId, setTaskId, setCancelMsg)}
+          onClick={() => handleCancel(taskId, setCancelMsg)}
           className="w-full mt-3 flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-red-500 hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
         >
           Cancel
