@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useVideoContext } from "../../contexts/VideoContext";
+import { useProgressContext } from "../../contexts/ProgressContext";
 import VideoDisplay from "../../components/VideoDisplay";
 import VideoSubmitBtn from "../../components/VideoSubmitBtn";
 import BackToVideoTools from "../../components/BackToVideoTools";
@@ -11,10 +12,20 @@ export default function ExtractAudioVideo() {
     const [error, setError] = useState<string | null>(null);
     const [audioFormat, setAudioFormat] = useState('mp3');
     const [audioQuality, setAudioQuality] = useState(320);
-    const [progress, setProgress] = useState<number>(0);
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+    const { 
+        tasks, 
+        addTask, 
+        removeTask, 
+        getTaskIdByName,
+        updateProgress
+    } = useProgressContext();
+
+    // Get the current task ID and progress
+    const currentTaskId = getTaskIdByName("Extracting Video Audio");
+    const currentTask = currentTaskId ? tasks[currentTaskId] : null;
+    const progress = currentTask?.progress || 0;
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -58,18 +69,6 @@ export default function ExtractAudioVideo() {
         };
     }, [videoFile]);
 
-    // progress tacking
-    useEffect(() => {
-      const progressHandler = (id: string, progress: number) => {
-        if (id === taskId) setProgress(progress);
-        console.log("inside progress handler", progress)
-      };
-      window.electronAPI.onProgress(progressHandler);
-      return () => {
-        window.electronAPI.removeProgressListener();
-      };
-    }, [taskId]);
-
     const handleRemoveVideo = () => {
         setVideoFile(null);
         setVideoURL(undefined);
@@ -85,15 +84,15 @@ export default function ExtractAudioVideo() {
       if (!videoFile) return;
       
       const newTaskId = Math.random().toString(36).substring(2, 15);
-      setTaskId(newTaskId);
-      setProgress(0);
+      addTask(newTaskId, "Extracting Video Audio", '/video/extract-audio');
       setCompletedMsg(null);
-      setCancelMsg(null)
+      setCancelMsg(null);
       setError(null);
 
       try {
         const arrayBuffer = await videoFile.arrayBuffer();
-        const tempResult = await window.electronAPI.createTempFile(arrayBuffer, audioFormat);
+        const extension = videoFile.name.split('.').pop() || '.mp4';
+        const tempResult = await window.electronAPI.createTempFile(arrayBuffer, extension);
         
         if (!tempResult.success || !tempResult.path) {
           throw new Error(tempResult.message || 'Failed to create temp file');
@@ -104,6 +103,7 @@ export default function ExtractAudioVideo() {
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
+          removeTask(newTaskId);
           throw new Error('Save canceled by user');
         }
 
@@ -118,6 +118,7 @@ export default function ExtractAudioVideo() {
 
         if (result.success) {
             setCompletedMsg(result.message);
+            removeTask(newTaskId);
         } else {
             if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
               setCancelMsg("Processing cancelled");
@@ -128,24 +129,26 @@ export default function ExtractAudioVideo() {
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
-      } finally {
-        setProgress(0);
+          if (newTaskId) removeTask(newTaskId);
       }
     };
 
     const handleCancel = async () => {
-        if (!taskId) return;
-        const { success } = await window.electronAPI.cancelProcessing(taskId);
-        if (success) {
+      const taskId = getTaskIdByName("Extracting Video Audio");
+      if (!taskId) return;
+      
+      const { success } = await window.electronAPI.cancelProcessing(taskId);
+      if (success) {
           setCancelMsg('Processing cancelled');
-        }
-        else {
+          removeTask(taskId);
+          updateProgress(taskId, 0); // Reset progress on cancel
+      } else {
           setCancelMsg('Error canceling');
-        }
-    };
+      }
+  };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToVideoTools
             title={"Audio Extractor"}
@@ -221,8 +224,7 @@ export default function ExtractAudioVideo() {
                     handleProcessing={handleProcessing}
                     videoFile={videoFile}
                     progress={progress}
-                    taskId={taskId}
-                    setTaskId={setTaskId}
+                    taskId={currentTaskId}
                 />
       
                 {/* Tips Section */}

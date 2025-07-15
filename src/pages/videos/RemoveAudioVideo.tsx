@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useVideoContext } from "../../contexts/VideoContext";
+import { useProgressContext } from "../../contexts/ProgressContext";
 import VideoDisplay from "../../components/VideoDisplay";
 import VideoSubmitBtn from "../../components/VideoSubmitBtn";
 import BackToVideoTools from "../../components/BackToVideoTools";
@@ -9,10 +10,19 @@ export default function RemoveAudioVideo() {
     const [videoURL, setVideoURL] = useState(undefined);
     // const videoRef = useRef(null);
     const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState<number>(0);
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+    const { 
+        tasks, 
+        addTask, 
+        removeTask, 
+        getTaskIdByName,
+        updateProgress
+    } = useProgressContext();
+
+    const currentTaskId = getTaskIdByName("Remove Video Audio");
+    const currentTask = currentTaskId ? tasks[currentTaskId] : null;
+    const progress = currentTask?.progress || 0;
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -56,18 +66,6 @@ export default function RemoveAudioVideo() {
         };
     }, [videoFile]);
 
-    // progress tacking
-    useEffect(() => {
-      const progressHandler = (id: string, progress: number) => {
-        if (id === taskId) setProgress(progress);
-        console.log("inside progress handler", progress)
-      };
-      window.electronAPI.onProgress(progressHandler);
-      return () => {
-        window.electronAPI.removeProgressListener();
-      };
-    }, [taskId]);
-
     const handleRemoveVideo = () => {
         setVideoFile(null);
         setVideoURL(undefined);
@@ -83,10 +81,9 @@ export default function RemoveAudioVideo() {
       if (!videoFile) return;
       
       const newTaskId = Math.random().toString(36).substring(2, 15);
-      setTaskId(newTaskId);
-      setProgress(0);
+      addTask(newTaskId, "Remove Video Audio", '/video/remove-audio');
       setCompletedMsg(null);
-      setCancelMsg(null)
+      setCancelMsg(null);
       setError(null);
 
       try {
@@ -103,6 +100,7 @@ export default function RemoveAudioVideo() {
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
+          removeTask(newTaskId);
           throw new Error('Save canceled by user');
         }
 
@@ -114,6 +112,7 @@ export default function RemoveAudioVideo() {
         });
 
         if (result.success) {
+            removeTask(newTaskId);
             setCompletedMsg(result.message);
         } else {
             if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
@@ -125,19 +124,21 @@ export default function RemoveAudioVideo() {
         }
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
-      } finally {
-        setProgress(0);
+          if (newTaskId) removeTask(newTaskId);
       }
     };
 
     const handleCancel = async () => {
+        const taskId = getTaskIdByName("Remove Video Audio");
         if (!taskId) return;
+        
         const { success } = await window.electronAPI.cancelProcessing(taskId);
         if (success) {
-          setCancelMsg('Processing cancelled');
-        }
-        else {
-          setCancelMsg('Error canceling');
+            setCancelMsg('Processing cancelled');
+            removeTask(taskId);
+            updateProgress(taskId, 0);
+        } else {
+            setCancelMsg('Error canceling');
         }
     };
             
@@ -176,8 +177,7 @@ export default function RemoveAudioVideo() {
                     handleProcessing={handleProcessing}
                     videoFile={videoFile}
                     progress={progress}
-                    taskId={taskId}
-                    setTaskId={setTaskId}
+                    taskId={currentTaskId}
                 />
             </div>
           </div>
