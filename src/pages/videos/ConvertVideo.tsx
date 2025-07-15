@@ -100,7 +100,7 @@ export default function ConvertVideo() {
         }
 
         const originalName = videoFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_converted.${extension}`;
+        const outputFilename = `${originalName}_converted.${videoFormat}`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -144,7 +144,7 @@ export default function ConvertVideo() {
     };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToVideoTools
             title={"Video Convertor"}

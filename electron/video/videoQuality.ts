@@ -1,32 +1,45 @@
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import ffmpeg from '../ffmpegConfig';
 import { ffmpegManager } from '../ffmpegManager';
-import { getFormatNameForAudios, getMuxersOfAudios } from '../getMetadataFfprobe';
+import { getFormatNameForVideos, getMuxersOfVideos } from '../getMetadataFfprobe';
 
-interface ArgumentArgs {
+interface AdjustmentArgs {
   taskId: string;
   inputPath: string;
   outputPath: string;
   duration: number;
-  fadeInStartTime: number;
-  fadeInDuration: number;
-  fadeOutStartTime: number;
-  fadeOutDuration: number;
+  crf: number;
 }
 
-export async function fadeAudio(
+export async function modifyQuality(
   event: IpcMainInvokeEvent,
-  { taskId, inputPath, outputPath, duration, fadeInStartTime, fadeInDuration, fadeOutStartTime, fadeOutDuration, }: ArgumentArgs
+  { taskId, inputPath, outputPath, duration, crf }: AdjustmentArgs
 ): Promise<string> {
   try {
+    const format = await getFormatNameForVideos(inputPath);
+    const muxer = getMuxersOfVideos(format);
 
-    const format = await getFormatNameForAudios(inputPath);
-    const muxer = getMuxersOfAudios(format);
+    const outputOptions = [
+        '-c:v libx264',
+        `-crf ${crf}`,
+        '-preset medium',
+        '-c:a aac',
+        '-b:a 128k'
+    ]
+    
+    if (['mp4','mov'].includes(format)) {
+        outputOptions.push(
+            '-movflags', 'frag_keyframe+empty_moov+default_base_moof+faststart'
+        );
+    } else {
+        outputOptions.push(
+            '-max_muxing_queue_size', '9999'
+        );
+    }
 
     await new Promise<void>((resolve, reject) => {
       const command = ffmpeg(inputPath)
-        .audioFilters(`afade=t=in:ss=${fadeInStartTime}:d=${fadeInDuration}`) // ss = start time, d = duration (both in seconds)
-        .audioFilters(`afade=t=out:st=${fadeOutStartTime}:d=${fadeOutDuration}`)
+        .outputOptions(outputOptions)
         .outputFormat(muxer)
         .output(outputPath)
         .on('progress', (progress) => {
@@ -56,16 +69,16 @@ export async function fadeAudio(
     });
 
 
-    return 'Audio fading complete';
+    return 'Quality modifying complete';
   } catch (error) {
     throw new Error(`Processing failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
-export function audioFadingHandler(): void {
-  ipcMain.handle('audio-fading', async (event, args: ArgumentArgs) => {
+export function videoQualityHandler(): void {
+  ipcMain.handle('video-quality', async (event, args: AdjustmentArgs) => {
     try {
-      const result = await fadeAudio(event, args);
+      const result = await modifyQuality(event, args);
       return { success: true, message: result };
     } catch (error) {
       return { 

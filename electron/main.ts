@@ -80,6 +80,7 @@ app.whenReady().then(async() => {
   const { compressVideoHandler } = await import('./video/videoCompressing.ts');
   const { convertVideoHandler } = await import('./video/videoConversion.ts');
   const { videoEqualizerHandler } = await import('./video/videoEqualizer.ts');
+   const { videoQualityHandler } = await import('./video/videoQuality.ts');
   const { extractAudioHandler } = await import('./video/videoExtractAudio.ts');
   const { videoPlaybackHandler } = await import('./video/videoPlaybackSpeed.ts');
   const { trimVideoHandler } = await import('./video/videoTrimming.ts');
@@ -93,6 +94,7 @@ app.whenReady().then(async() => {
   const { audioVolumeHandler } = await import('./audio/audioVolume.ts');
   const { audioSpeedHandler } = await import('./audio/audioSpeed.ts');
   const { audioOptimizeHandle } = await import('./audio/audioOptimization.ts');
+  const { audioEqualizerHandler } = await import('./audio/audioEqualizer.ts');
   const { audioNormalizingHandler } = await import('./audio/audioNormalize.ts');
   const { audioReverseHandler } = await import('./audio/audioReversing.ts');
   const { audioConvertingHandler } = await import('./audio/audioConverting.ts');
@@ -125,6 +127,7 @@ app.whenReady().then(async() => {
   trimVideoHandler();
   videoVolumeHandler();
   videoStabilizationHandler();
+  videoQualityHandler();
   videoPitchHandler();
   videoAudioRemovingHandler();
   videoNoiseHandler();
@@ -133,6 +136,7 @@ app.whenReady().then(async() => {
   audioVolumeHandler();
   audioSpeedHandler();
   audioOptimizeHandle();
+  audioEqualizerHandler();
   audioNormalizingHandler();
   audioReverseHandler();
   audioConvertingHandler();

@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/slices/themeSlice';
+import { useProgressContext } from "../contexts/ProgressContext";
 import { useCallback } from 'react';
 import { useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -28,6 +29,7 @@ const toolCategories = [
 const SideBar = () => {
     const theme = useSelector((state: { theme: { mode: any; }; }) => state.theme.mode);
     const dispatch = useDispatch();
+    const { taskId, name: progressName, pageLink, progress } = useProgressContext();
 
     useLayoutEffect(() => {
         document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -108,6 +110,16 @@ const SideBar = () => {
                         </>
                     )}
                 </button>
+                {pageLink && taskId &&
+                <Link 
+                    key={"progress-link"}
+                    to={pageLink}
+                    className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                    <span className="text-lg mr-3">{progressName}</span>
+                    {`${Math.round(progress)}%`}
+                </Link>
+                }
             </nav>
         </div>
     )

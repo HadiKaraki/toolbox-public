@@ -5,6 +5,7 @@ import './index.css'
 import { ImageProvider } from './contexts/ImageContext.js';
 import { VideoProvider } from './contexts/VideoContext.js';
 import { AudioProvider } from './contexts/AudioContext.js'
+import { ProgressProvider } from './contexts/ProgressContext.js'
 import { Provider } from 'react-redux';
 import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -16,7 +17,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ImageProvider>
           <VideoProvider>
             <AudioProvider>
-              <App />
+              <ProgressProvider>
+                <App />
+              </ProgressProvider>
             </AudioProvider>
           </VideoProvider>
         </ImageProvider>

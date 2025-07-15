@@ -1,18 +1,13 @@
-video quality
-video converting not working (keeping it mp4)
+video quality needs way more than only changing CRF; quality consists of many other things
 
 audio trimming
-audio silence remover
-audio spectrogram
-audio equalizer
-audio fading backend (?)
 
 For speeding up videos or audios, the process is completing before the progress gets to 100%,
 because the duration of the new video or audio (if the playback is increases not decreased) would
 be less than the original
 
 remove this when cancelling a process and keep the Process Cancled message:
-Processing failed: ffmpeg was killed with signal SIGTERM
+Processing failed: ffmpeg was killed with signal SIGTERM (should be done)
 
 for tagging new releases:
 - first the package version should be the same as the tag

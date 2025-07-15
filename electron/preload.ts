@@ -57,6 +57,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   normalizeAudio: (args: any) => ipcRenderer.invoke('audio-normalize', args),
   reverseAudio: (args: any) => ipcRenderer.invoke('audio-reverse', args),
   convertAudio: (args: any) => ipcRenderer.invoke('audio-convert', args),
+  fadeAudio: (args: any) => ipcRenderer.invoke('audio-fading', args),
   addEchoAudio: (args: any) => ipcRenderer.invoke('audio-echo', args),
   generateSpectrogram: (args: any) => ipcRenderer.invoke('audio-spectrogram', args),
   silenceRemover: (args: any) => ipcRenderer.invoke('audio-silence-remover', args),

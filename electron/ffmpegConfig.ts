@@ -5,6 +5,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import { app } from 'electron';
 
 // Get the __dirname equivalent in ESM
+// this takes the path all the way from C:// to this file here (but under dist-electron, in development)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // console.log("__dirname", __dirname)
 
@@ -14,7 +15,7 @@ function getFfmpegPath() {
     // DEVELOPMENT: Use absolute path to node_modules
     return path.join(
       __dirname,
-      '../node_modules/@ffmpeg-installer/win32-x64/ffmpeg.exe'
+      '../node_modules/@ffmpeg-installer/win32-x64/ffmpeg.exe' // ../ because it will be inside dist-electron; node_modules above it
     );
   } else {
     // PRODUCTION: Use unpacked binary in resources

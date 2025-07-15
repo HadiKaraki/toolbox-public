@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useVideoContext } from "../../contexts/VideoContext";
+import { useProgressContext } from "../../contexts/ProgressContext";
 import VideoDisplay from "../../components/VideoDisplay";
 import VideoSubmitBtn from "../../components/VideoSubmitBtn";
 import BackToVideoTools from "../../components/BackToVideoTools";
@@ -10,10 +11,11 @@ export default function ChangeFps() {
     // const videoRef = useRef(null);
     const [fps, setFps] = useState(30);
     const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState<number>(0);
-    const [taskId, setTaskId] = useState<string | null>(null);
+    // const [progress, setProgress] = useState<number>(0);
+    // const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+    const { taskId, setTaskId, setName, setPageLink, progress, setProgress } = useProgressContext();
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -57,17 +59,6 @@ export default function ChangeFps() {
         };
     }, [videoFile]);
 
-    // progress tacking
-    useEffect(() => {
-      const progressHandler = (id: string, progress: number) => {
-        if (id === taskId) setProgress(progress);
-      };
-      window.electronAPI.onProgress(progressHandler);
-      return () => {
-        window.electronAPI.removeProgressListener();
-      };
-    }, [taskId]);
-
     const handleRemoveVideo = () => {
         setVideoFile(null);
         setVideoURL(undefined);
@@ -84,7 +75,8 @@ export default function ChangeFps() {
       
       const newTaskId = Math.random().toString(36).substring(2, 15);
       setTaskId(newTaskId);
-      setProgress(0);
+      setName("Changing FPS")
+      setPageLink("/video/frame-rate")
       setCompletedMsg(null);
       setCancelMsg(null)
       setError(null);
@@ -127,6 +119,9 @@ export default function ChangeFps() {
       } catch (err) {
           setError(err instanceof Error ? err.message : 'Processing failed');
       } finally {
+        setTaskId(null);
+        setName(null);
+        setPageLink(null);
         setProgress(0);
       }
     };
