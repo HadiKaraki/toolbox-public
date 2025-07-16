@@ -138,7 +138,7 @@ export default function Home() {
   ];
 
   return (
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
+      <div className="flex flex-col min-h-screen">
        {/* Category Navigation */}
         <div className="max-w-7xl mt-16 flex flex-col mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h1 className="text-center text-3xl dark:text-white md:text-4xl font-bold leading-tight mb-6">Media Tools Directory</h1>
@@ -157,7 +157,7 @@ export default function Home() {
         </div>
         
         {/* Tools by Category */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div className="min-w-7xl max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
           {toolCategories.map(category => (
             <section 
               key={category.id} 

@@ -99,6 +99,7 @@ app.whenReady().then(async() => {
   const { audioReverseHandler } = await import('./audio/audioReversing.ts');
   const { audioConvertingHandler } = await import('./audio/audioConverting.ts');
   const { audioEchoHandler } = await import('./audio/audioEcho.ts');
+  const { audioTrimmingHandler } = await import('./audio/audioTrimming.ts');
   const { audioFadingHandler } = await import('./audio/audioFading.ts');
   const { audioSpectrogramHandler } = await import('./audio/audioSpectrogram.ts');
   const { audioSilenceRemoverHandler } = await import('./audio/audioSilenceRemover.ts');
@@ -139,6 +140,7 @@ app.whenReady().then(async() => {
   audioEqualizerHandler();
   audioNormalizingHandler();
   audioReverseHandler();
+  audioTrimmingHandler();
   audioConvertingHandler();
   audioEchoHandler();
   audioFadingHandler();

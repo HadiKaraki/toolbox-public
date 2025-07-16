@@ -4,8 +4,6 @@ video extract audio:
 Processing failed: ffmpeg exited with code 1: Output #0, mp3, to 'C:\Users\calm-\Downloads\5538262-hd_1920_1080_25fps_pitched_audio.mp3': Output file #0 does not contain any stream
 This is only happening for certain (corrupted ?) video files
 
-audio trimming
-
 For speeding up videos or audios, the process is completing before the progress gets to 100%,
 because the duration of the new video or audio (if the playback is increases not decreased) would
 be less than the original

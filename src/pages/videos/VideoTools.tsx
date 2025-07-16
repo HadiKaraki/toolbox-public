@@ -123,7 +123,7 @@ export default function VideoTools() {
         </div>
 
         {/* Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-w-7xl max-w-7xl mx-auto gap-6">
           {filteredTools.map((tool, index) => (
             <ToolCard 
               key={index}

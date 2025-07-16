@@ -1,27 +1,30 @@
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import ffmpeg from '../ffmpegConfig';
 import { ffmpegManager } from '../ffmpegManager';
+import { getFormatNameForAudios, getMuxersOfAudios } from '../getMetadataFfprobe';
 
-interface SpectrogramArgs {
+interface SpeedAdjustmentArgs {
   taskId: string;
   inputPath: string;
   outputPath: string;
   duration: number;
+  startTime: string;
+  endTime: number;
 }
 
-export async function audioSpectrogram(
+export async function trimAudio(
   event: IpcMainInvokeEvent,
-  { taskId, inputPath, outputPath, duration }: SpectrogramArgs
+  { taskId, inputPath, outputPath, duration, startTime, endTime }: SpeedAdjustmentArgs
 ): Promise<string> {
   try {
+    const format = await getFormatNameForAudios(inputPath);
+    const muxer = getMuxersOfAudios(format);
 
     await new Promise<void>((resolve, reject) => {
       const command = ffmpeg(inputPath)
-        .outputOptions([
-            '-lavfi showspectrumpic=s=1024x512:color=rainbow',
-            '-frames:v 1'
-        ])
-        .outputFormat('mjpeg')
+        .setStartTime(startTime)
+        .setDuration(endTime)
+        .outputFormat(muxer)
         .output(outputPath)
         .on('progress', (progress) => {
           const [h, m, s] = progress.timemark.split(':').map(parseFloat);
@@ -34,8 +37,8 @@ export async function audioSpectrogram(
             });
           }
         })
-        .on('start', cmd => console.log('FFmpeg command:', cmd))
-        .on('stderr', line => console.log('FFmpeg stderr:', line))
+        // .on('start', cmd => console.log('FFmpeg command:', cmd))
+        // .on('stderr', line => console.log('FFmpeg stderr:', line))
         .on('end', () => {
           ffmpegManager.cancelProcess(taskId);
           resolve();
@@ -50,16 +53,16 @@ export async function audioSpectrogram(
     });
 
 
-    return 'Audio spectrogram complete';
+    return 'Audio trimming complete';
   } catch (error) {
     throw new Error(`Processing failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
-export function audioSpectrogramHandler(): void {
-  ipcMain.handle('audio-spectrogram', async (event, args: SpectrogramArgs) => {
+export function audioTrimmingHandler(): void {
+  ipcMain.handle('audio-trimming', async (event, args: SpeedAdjustmentArgs) => {
     try {
-      const result = await audioSpectrogram(event, args);
+      const result = await trimAudio(event, args);
       return { success: true, message: result };
     } catch (error) {
       return { 

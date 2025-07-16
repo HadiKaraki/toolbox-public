@@ -28,8 +28,8 @@ export default function FavoriteTools() {
 
   if (favorites.length === 0) { 
     return (
-        <div className="not-found flex flex-col items-center justify-center mt-20 mb-20">
-            <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-black dark:text-white">
+        <div className="not-found flex flex-col items-center justify-center mt-30 mb-20">
+            <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-black dark:text-white">
                 No Favorites Currently
             </h1>
         </div>
