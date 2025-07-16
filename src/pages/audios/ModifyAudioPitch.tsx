@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AudioDisplay from "../../components/AudioDisplay";
+import { useProgressContext } from "../../contexts/ProgressContext";
 import AudioSubmitBtn from "../../components/AudioSubmitBtn";
 import BackToAudioTools from "../../components/BackToAudioTools";
 import { useAudioContext } from "../../contexts/AudioContext";
@@ -9,10 +10,19 @@ export default function ModifyAudioPitch() {
     const [audioURL, setAudioURL] = useState(undefined);
     const [pitch, setPitch] = useState(1);
     const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState<number>(0);
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+    const { 
+        tasks, 
+        addTask, 
+        removeTask, 
+        getTaskIdByName,
+        updateProgress
+    } = useProgressContext();
+
+    const currentTaskId = getTaskIdByName("Modifying Audio Pitch");
+    const currentTask = currentTaskId ? tasks[currentTaskId] : null;
+    const progress = currentTask?.progress || 0;
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -58,18 +68,6 @@ export default function ModifyAudioPitch() {
         };
     }, [audioFile]);
 
-    // progress tacking
-    useEffect(() => {
-        const progressHandler = (id: string, progress: number) => {
-            if (id === taskId) setProgress(progress);
-            console.log("inside progress handler", progress)
-        };
-        window.electronAPI.onProgress(progressHandler);
-        return () => {
-            window.electronAPI.removeProgressListener();
-        };
-    }, [taskId]);
-
     const handleRemoveAudio = () => {
         setAudioFile(null);
         setAudioURL(undefined);
@@ -85,11 +83,11 @@ export default function ModifyAudioPitch() {
         if (!audioFile) return;
 
         const newTaskId = Math.random().toString(36).substring(2, 15);
-        setTaskId(newTaskId);
-        setProgress(0);
+        addTask(newTaskId, "Modifying Audio Pitch", '/audio/pitch');
         setCompletedMsg(null);
-        setCancelMsg(null)
+        setCancelMsg(null);
         setError(null);
+
 
         try {
             const arrayBuffer = await audioFile.arrayBuffer();
@@ -105,6 +103,7 @@ export default function ModifyAudioPitch() {
             const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
 
             if (!outputPath) {
+                removeTask(newTaskId);
                 throw new Error('Save canceled by user');
             }
 
@@ -117,6 +116,7 @@ export default function ModifyAudioPitch() {
             });
 
             if (result.success) {
+                removeTask(newTaskId);
                 setCompletedMsg(result.message);
             } else {
                 if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
@@ -128,18 +128,20 @@ export default function ModifyAudioPitch() {
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Processing failed');
-        } finally {
-            setProgress(0);
+            if (newTaskId) removeTask(newTaskId);
         }
     };
 
     const handleCancel = async () => {
+        const taskId = getTaskIdByName("Modifying Audio Pitch");
         if (!taskId) return;
+        
         const { success } = await window.electronAPI.cancelProcessing(taskId);
         if (success) {
             setCancelMsg('Processing cancelled');
-        }
-        else {
+            removeTask(taskId);
+            updateProgress(taskId, 0);
+        } else {
             setCancelMsg('Error canceling');
         }
     };
@@ -210,8 +212,7 @@ export default function ModifyAudioPitch() {
                             handleProcessing={handleProcessing}
                             audioFile={audioFile}
                             progress={progress}
-                            taskId={taskId}
-                            setTaskId={setTaskId}
+                            taskId={currentTaskId}
                         />
 
                         {/* Tips Section */}

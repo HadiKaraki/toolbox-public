@@ -1,6 +1,8 @@
 video quality needs way more than only changing CRF; quality consists of many other things
+
 video extract audio:
 Processing failed: ffmpeg exited with code 1: Output #0, mp3, to 'C:\Users\calm-\Downloads\5538262-hd_1920_1080_25fps_pitched_audio.mp3': Output file #0 does not contain any stream
+This is only happening for certain (corrupted ?) video files
 
 audio trimming
 

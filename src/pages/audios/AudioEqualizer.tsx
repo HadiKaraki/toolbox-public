@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AudioDisplay from "../../components/AudioDisplay";
+import { useProgressContext } from "../../contexts/ProgressContext";
 import AudioSubmitBtn from "../../components/AudioSubmitBtn";
 import BackToAudioTools from "../../components/BackToAudioTools";
 import { useAudioContext } from "../../contexts/AudioContext";
@@ -16,10 +17,19 @@ export default function AudioEqualizer() {
     const [bandwidth, setBandwidth] = useState(500);
     const [gain, setGain] = useState(0);
     const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState<number>(0);
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+    const { 
+        tasks, 
+        addTask, 
+        removeTask, 
+        getTaskIdByName,
+        updateProgress
+    } = useProgressContext();
+
+    const currentTaskId = getTaskIdByName("Equalizing Audio");
+    const currentTask = currentTaskId ? tasks[currentTaskId] : null;
+    const progress = currentTask?.progress || 0;
 
     const handleEqualizeMode = (value: string) => {
         switch (value) {
@@ -110,18 +120,6 @@ export default function AudioEqualizer() {
         }
     }, [frequency, bandwidth, gain]);    
 
-    // progress tacking
-    useEffect(() => {
-        const progressHandler = (id: string, progress: number) => {
-            if (id === taskId) setProgress(progress);
-            console.log("inside progress handler", progress)
-        };
-        window.electronAPI.onProgress(progressHandler);
-        return () => {
-            window.electronAPI.removeProgressListener();
-        };
-    }, [taskId]);
-
     const handleRemoveAudio = () => {
         setAudioFile(null);
         setAudioURL(undefined);
@@ -137,10 +135,9 @@ export default function AudioEqualizer() {
         if (!audioFile) return;
 
         const newTaskId = Math.random().toString(36).substring(2, 15);
-        setTaskId(newTaskId);
-        setProgress(0);
+        addTask(newTaskId, "Equalizing Audio", '/audio/equalize');
         setCompletedMsg(null);
-        setCancelMsg(null)
+        setCancelMsg(null);
         setError(null);
 
         try {
@@ -157,6 +154,7 @@ export default function AudioEqualizer() {
             const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
 
             if (!outputPath) {
+                removeTask(newTaskId);
                 throw new Error('Save canceled by user');
             }
 
@@ -171,6 +169,7 @@ export default function AudioEqualizer() {
             });
 
             if (result.success) {
+                removeTask(newTaskId);
                 setCompletedMsg(result.message);
             } else {
                 if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
@@ -182,18 +181,20 @@ export default function AudioEqualizer() {
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Processing failed');
-        } finally {
-            setProgress(0);
+            if (newTaskId) removeTask(newTaskId);
         }
     };
 
     const handleCancel = async () => {
+        const taskId = getTaskIdByName("Equalizing Audio");
         if (!taskId) return;
+        
         const { success } = await window.electronAPI.cancelProcessing(taskId);
         if (success) {
             setCancelMsg('Processing cancelled');
-        }
-        else {
+            removeTask(taskId);
+            updateProgress(taskId, 0);
+        } else {
             setCancelMsg('Error canceling');
         }
     };
@@ -335,8 +336,7 @@ export default function AudioEqualizer() {
                                 handleProcessing={handleProcessing}
                                 audioFile={audioFile}
                                 progress={progress}
-                                taskId={taskId}
-                                setTaskId={setTaskId}
+                                taskId={currentTaskId}
                             />
                         </div>
 
