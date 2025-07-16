@@ -41,14 +41,3 @@ jobs:
         run: npx electron-builder build --${{ matrix.platform }} --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifacts (optional)
-        if: matrix.os == 'ubuntu-latest'  # Only upload from one runner to avoid duplicates
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-assets
-          path: |
-            release/*.exe
-            release/*.dmg
-            release/*.AppImage
-            release/*.yml

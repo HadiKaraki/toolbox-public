@@ -1,5 +1,5 @@
 import { autoUpdater } from 'electron-updater';
-import { BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 
 export function setupAutoUpdater() {
 
@@ -8,7 +8,11 @@ export function setupAutoUpdater() {
 
   // Check for updates
   ipcMain.handle('check-for-updates', async () => {
+    // console.log("Checking for updates")
     try {
+      if (!app.isPackaged) {
+        autoUpdater.forceDevUpdateConfig = true;
+      }
       const result = await autoUpdater.checkForUpdates();
       return {
         available: true,
@@ -22,6 +26,7 @@ export function setupAutoUpdater() {
 
   // Download updates
   ipcMain.handle('download-update', async () => {
+    // console.log("Downloading updates")
     try {
       await autoUpdater.downloadUpdate();
       return { success: true };

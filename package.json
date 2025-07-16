@@ -1,7 +1,7 @@
 {
   "name": "toolbox-pro",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.2",
   "type": "module",
   "description": "Edit, convert, and enhance images, videos, and audio files with our suite of professional tools.",
   "author": {
@@ -47,7 +47,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "cross-env": "^7.0.3",
     "electron": "^30.0.1",
-    "electron-builder": "^24.13.3",
+    "electron-builder": "^26.0.12",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",

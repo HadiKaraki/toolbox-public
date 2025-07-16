@@ -1,253 +1,192 @@
 import { useState, useEffect } from 'react';
-import { Button, CircularProgress, Box, Typography, useTheme } from '@mui/material';
-import { DownloadCloud, RefreshCw, CheckCircle2, AlertCircle,  } from 'lucide-react';
+import { DownloadCloud, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+
+interface UpdateInfo {
+  available: boolean;
+  version?: string;
+  releaseNotes?: string;
+  error?: string;
+}
+
+interface DownloadProgress {
+  percent: number;
+}
+
+// Basic HTML sanitizer (for demo purposes - consider using DOMPurify in production)
+const sanitizeHTML = (html: string) => {
+  return html.replace(/<script.*?>.*?<\/script>/gi, '');
+};
 
 const UpdateManager = () => {
-  const [updateInfo, setUpdateInfo] = useState<{
-    available: boolean;
-    version?: string;
-    releaseNotes?: string;
-    error?: string;
-  } | null>(null);
-
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const theme = useTheme();
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState<number>(0);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
   useEffect(() => {
     const checkUpdates = async () => {
-      const result = await window.electronAPI.checkForUpdates();
-      console.log(result)
-      setUpdateInfo(result);
+      try {
+        const result = await window.electronAPI.checkForUpdates();
+        setUpdateInfo(result);
+      } catch (error) {
+        setUpdateInfo({
+          available: false,
+          error: error instanceof Error ? error.message : 'Failed to check for updates'
+        });
+      }
     };
 
     checkUpdates();
 
-    window.electronAPI.onUpdateDownloadProgress((progress) => {
+    const progressHandler = (progress: DownloadProgress) => {
       setDownloadProgress(progress.percent);
-    });
-
-    return () => {
-      window.electronAPI.onUpdateDownloadProgress(() => {});
     };
+
+    window.electronAPI.onUpdateDownloadProgress(progressHandler);
+
+    // return () => {
+    //   window.electronAPI.offUpdateDownloadProgress(progressHandler);
+    // };
   }, []);
 
   const handleDownload = async () => {
     setIsDownloading(true);
-    const result = await window.electronAPI.downloadUpdate();
-    if (result.success) {
-      setIsDownloading(false);
-    } else {
-      setUpdateInfo(prev => {
-        if (!prev) {
-            return { available: false, error: result.error };
-        }
-        return { ...prev, error: result.error };
-      });
+    try {
+      const result = await window.electronAPI.downloadUpdate();
+      if (!result.success) {
+        throw new Error(result.error || 'Download failed');
+      }
+    } catch (error) {
+      setUpdateInfo(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Download failed'
+      } as UpdateInfo));
+    } finally {
       setIsDownloading(false);
     }
   };
 
-  // const handleRestart = () => {
-  //   // In a real app, this would trigger the update installation
-  //   alert("Update would install and restart the application");
-  // };
+  // Function to safely render HTML content
+  const renderReleaseNotes = (notes?: string) => {
+    if (!notes) return "No release notes available.";
+    
+    const sanitized = sanitizeHTML(notes);
+    return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
+  };
 
-  // Loading state
   if (!updateInfo) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100%',
-        p: 3,
-        textAlign: 'center'
-      }}>
-        <CircularProgress size={60} thickness={3} sx={{ mb: 3 }} />
-        <Typography variant="h6" sx={{ mb: 1 }}>Checking for Updates</Typography>
-        <Typography variant="body2" color="text.secondary">
+      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-6"></div>
+        <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-white">
+          Checking for Updates
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400">
           Looking for the latest version of Media Tools Pro...
-        </Typography>
-      </Box>
+        </p>
+      </div>
     );
   }
 
-  // Error state
   if (updateInfo.error) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100%',
-        p: 3,
-        textAlign: 'center'
-      }}>
-        <AlertCircle size={60} color={theme.palette.error.main} style={{ marginBottom: 16 }} />
-        <Typography variant="h6" sx={{ mb: 1 }}>Update Check Failed</Typography>
-        <Typography variant="body1" sx={{ mb: 2, maxWidth: 400 }}>
-          {updateInfo.error || "Could not connect to the update server. Please check your internet connection."}
-        </Typography>
-        <Button 
-          variant="contained" 
-          color="primary" 
+      <div className="flex flex-col mt-34 items-center justify-center h-full p-8 text-center">
+        <AlertCircle className="w-16 h-16 text-red-500 mb-6" />
+        <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-white">
+          Update Check Failed
+        </h2>
+        <p className="text-gray-700 dark:text-gray-300 max-w-md mb-6">
+          {updateInfo.error}
+        </p>
+        <button
           onClick={() => window.location.reload()}
-          sx={{ mt: 2 }}
+          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
           Retry
-        </Button>
-      </Box>
+        </button>
+      </div>
     );
   }
 
-  // No updates available
   if (!updateInfo.available) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100%',
-        p: 3,
-        textAlign: 'center'
-      }}>
-        <CheckCircle2 size={60} color={theme.palette.success.main} style={{ marginBottom: 16 }} />
-        <Typography variant="h6" sx={{ mb: 1 }}>You're Up to Date</Typography>
-        <Typography variant="body1" sx={{ mb: 2 }}>
+      <div className="flex flex-col mt-34 items-center justify-center h-full p-8 text-center">
+        <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
+        <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-white">
+          You're Up to Date
+        </h2>
+        <p className="text-gray-700 dark:text-gray-300 mb-6">
           Media Tools Pro is running the latest version.
-        </Typography>
-        <Button 
-          variant="outlined" 
-          color="primary" 
+        </p>
+        <button
           onClick={() => window.location.reload()}
-          sx={{ mt: 2 }}
+          className="px-6 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
         >
           Check Again
-        </Button>
-      </Box>
+        </button>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ 
-      mt: 10,
-      p: 3,
-      backgroundColor: theme.palette.mode === 'dark' ? '#121212' : '#f5f7ff'
-    }}>
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        mb: 3,
-        p: 2,
-        borderRadius: 2,
-        backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#ffffff',
-        boxShadow: theme.shadows[1]
-      }}>
-        <RefreshCw size={40} color={theme.palette.primary.main} style={{ marginRight: 16 }} />
+    <div className="min-w-2xl max-w-2xl mt-34 mx-auto p-6">
+      <div className="flex items-start gap-4 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm mb-6">
+        <RefreshCw className="w-10 h-10 text-blue-500 mt-1 flex-shrink-0" />
         <div>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             Update Available
-          </Typography>
-          <Typography variant="body1">
+          </h1>
+          <p className="text-lg text-black dark:text-gray-300">
             Version {updateInfo.version} is ready to download
-          </Typography>
+          </p>
         </div>
-      </Box>
-      
-      <Box sx={{ 
-        flex: 1, 
-        p: 3,
-        mb: 3,
-        borderRadius: 2,
-        backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#ffffff',
-        boxShadow: theme.shadows[1],
-        overflowY: 'auto'
-      }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
-          Release Notes
-        </Typography>
-        <Box component="pre" sx={{ 
-          fontFamily: 'inherit', 
-          whiteSpace: 'pre-wrap',
-          backgroundColor: theme.palette.mode === 'dark' ? '#252525' : '#f8f9ff',
-          p: 2,
-          borderRadius: 1,
-          borderLeft: `3px solid ${theme.palette.primary.main}`
-        }}>
-          {updateInfo.releaseNotes}
-        </Box>
-      </Box>
-      
-      <Box sx={{ 
-        p: 3,
-        borderRadius: 2,
-        backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#ffffff',
-        boxShadow: theme.shadows[1]
-      }}>
-        {isDownloading ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <CircularProgress 
-                variant="determinate" 
-                value={downloadProgress} 
-                size={24} 
-                thickness={6}
-                sx={{ mr: 2 }} 
-              />
-              <Typography variant="body1">
-                Downloading update...
-              </Typography>
-            </Box>
-            
-            <Box sx={{ width: '100%', height: 8, borderRadius: 4, backgroundColor: theme.palette.action.hover, mb: 2 }}>
-              <Box 
-                sx={{ 
-                  height: '100%', 
-                  borderRadius: 4, 
-                  backgroundColor: 'primary.main',
-                  width: `${downloadProgress}%`,
-                  transition: 'width 0.3s ease'
-                }} 
-              />
-            </Box>
-            
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'right' }}>
-              {Math.round(downloadProgress)}% complete
-            </Typography>
-          </Box>
-        ) : (
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={handleDownload}
-            startIcon={<DownloadCloud size={20} />}
-            fullWidth
-            size="large"
-            sx={{ py: 1.5, fontWeight: 600 }}
-          >
-            Download Update
-          </Button>
-        )}
+      </div>
 
-        {/* {downloadProgress >= 100 && (
-          <Button
-            variant="contained"
-            color="success"
-            onClick={handleRestart}
-            startIcon={<RotateCcw size={20} />}
-            fullWidth
-            size="large"
-            sx={{ mt: 2, py: 1.5, fontWeight: 600 }}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          Release Notes
+        </h2>
+        <div className="bg-gray-50 dark:bg-gray-700/50 p-4 text-black dark:text-gray-300 rounded-lg border-l-4 border-blue-500 overflow-auto prose dark:prose-invert max-w-none">
+          {renderReleaseNotes(updateInfo.releaseNotes)}
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        {isDownloading ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="relative w-6 h-6">
+                <div className="absolute inset-0 rounded-full border-2 border-blue-200"></div>
+                <div 
+                  className="absolute inset-0 rounded-full border-2 border-blue-500 border-t-transparent"
+                  style={{ transform: `rotate(${downloadProgress * 3.6}deg)` }}
+                ></div>
+              </div>
+              <span className="text-gray-700 dark:text-gray-300">Downloading update...</span>
+            </div>
+
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+              <div 
+                className="bg-blue-600 h-2.5 rounded-full" 
+                style={{ width: `${downloadProgress}%` }}
+              ></div>
+            </div>
+
+            <p className="text-right text-sm text-gray-500 dark:text-gray-400">
+              {Math.round(downloadProgress)}% complete
+            </p>
+          </div>
+        ) : (
+          <button
+            onClick={handleDownload}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            disabled={isDownloading}
           >
-            Restart & Install Update
-          </Button>
-        )} */}
-      </Box>
-    </Box>
+            <DownloadCloud className="w-5 h-5" />
+            Download Update
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 
