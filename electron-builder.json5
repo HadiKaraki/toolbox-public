@@ -3,7 +3,6 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "net.toolbox.hadikaraki",
   "asar": true,
-  "deterministic": true, // Ensures consistent checksums
   "asarUnpack": [
     "**/ffmpeg/*",
     "**/ffprobe/*"
