@@ -9,6 +9,24 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+interface DownloadProgress {
+  percent: number;
+  bytesPerSecond: number;
+  total: number;
+  transferred: number;
+}
+
+interface UpdateInfo {
+  available: boolean;
+  isLatest: boolean;
+  version: string;
+}
+
+interface UpdateError {
+  message: string;
+  stack?: string;
+}
+
 // Add this Electron API declaration:
 interface Window {
   electronAPI: {
@@ -307,6 +325,7 @@ interface Window {
     }) => Promise<{ success: boolean; message: string }>;
 
     // OTHER
+    showSaveDialog: (defaultName: string) => Promise<string | undefined>;
     createTempFile: (data: ArrayBuffer, extension: string) => Promise<{
       success: boolean;
       path?: string;
@@ -316,17 +335,27 @@ interface Window {
     // Progress management
     onProgress: (callback: (taskId: string, progress: number) => void) => void;
     removeProgressListener: () => void;
-    // startProcessing: (args: { taskId: string; inputPath: string; outputPath: string }) => Promise<{ success: boolean; message?: string }>;
     cancelProcessing: (taskId: string) => Promise<{ success: boolean; message?: string }>;
 
     // AUTO UPDATES
     // Check Promise values from autoUpdater.ts
-    checkForUpdates: () => Promise<{available: boolean; version?: string, releaseNotes?: string; error?: string}>;
-    // showUpdateWindow: () => void;
-    downloadUpdate: () => Promise<{success: boolean; error?: string}>;
+    checkForUpdates: () => Promise<{
+      available: boolean;
+      version?: string;
+      releaseNotes?: string;
+      error?: string;
+      isChecking: boolean;
+      isLatest?: boolean;
+    }>;
+    downloadUpdate: () => Promise<{
+      success: boolean;
+      error?: string;
+      isLatest?: boolean;
+    }>;
     quitAndInstall: () => void;
-    onUpdateDownloadProgress: (callback: (progress: any) => void) => void;
-
-    showSaveDialog: (defaultName: string) => Promise<string | undefined>;
+    onUpdateDownloadProgress: (callback: (progress: DownloadProgress) => void) => void;
+    onUpdateDownloaded: (callback: (info: UpdateInfo) => void) => void;
+    onUpdateError: (callback: (error: UpdateError) => void) => void;
+    removeUpdateListeners: () => void;
   };
 }

@@ -1,7 +1,7 @@
 {
   "name": "toolbox-pro",
   "private": true,
-  "version": "0.0.4",
+  "version": "1.0.0",
   "type": "module",
   "description": "Edit, convert, and enhance images, videos, and audio files with our suite of professional tools.",
   "author": {
@@ -34,7 +34,7 @@
     "react-router-dom": "^7.6.3",
     "redux-persist": "^6.0.0",
     "sharp": "^0.34.2",
-    "tailwindcss": "^4.1.10",
+    "tailwindcss": "^4.1.11",
     "vite-plugin-electron": "^0.29.0"
   },
   "devDependencies": {

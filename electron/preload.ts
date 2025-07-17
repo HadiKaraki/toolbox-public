@@ -1,5 +1,8 @@
 import { ipcRenderer, contextBridge } from 'electron'
 
+interface DownloadProgress {
+  percent: number;
+}
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('electronAPI', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
@@ -88,7 +91,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // showUpdateWindow: () => ipcRenderer.invoke('show-update-window'),
   downloadUpdate: () => ipcRenderer.invoke('download-update'),
   quitAndInstall: () => ipcRenderer.invoke('quit-and-install'),
-  onUpdateDownloadProgress: (callback: (progress: any) => void) => {
+  onUpdateDownloadProgress: (callback: (progress: DownloadProgress) => void) => {
     ipcRenderer.on('update-download-progress', (_, progress) => callback(progress));
+  },
+  onUpdateDownloaded: (callback: (info: { version: string }) => void) => {
+    ipcRenderer.on('update-downloaded', (_, info) => callback(info));
+  },
+  onUpdateError: (callback: (error: { message: string, stack?: string }) => void) => {
+    ipcRenderer.on('update-error', (_, error) => callback(error));
+  },
+  removeUpdateListeners: () => {
+    ipcRenderer.removeAllListeners('update-download-progress');
+    ipcRenderer.removeAllListeners('update-downloaded');
+    ipcRenderer.removeAllListeners('update-error');
   }
 })

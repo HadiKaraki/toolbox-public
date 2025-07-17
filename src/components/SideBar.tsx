@@ -83,7 +83,7 @@ const SideBar = () => {
                     to='/update'
                     className="flex border-b text-white hover:text-black border-gray-400 dark:border-gray-700 items-center px-4 py-5 dark:hover:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
-                    <span className="text-xl mr-3">⬇️</span>
+                    <span className="text-xl mr-3">⬆️</span>
                     <span className="font-medium">Update</span>
                 </Link>
                 <button 
