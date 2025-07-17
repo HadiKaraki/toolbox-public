@@ -34,7 +34,8 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
     e.preventDefault();
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -79,6 +80,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
             <video 
               controls
               className="w-full"
+              preload='metadata'
               src={videoURL}
             />
           </div>

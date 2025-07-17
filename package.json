@@ -8,7 +8,7 @@
     "name": "Hadi Karaki"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsc && vite",
+    "dev": "cross-env NODE_ENV=development && vite",
     "build": "npx cross-env NODE_ENV=production tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "cross-env NODE_ENV=production vite preview",

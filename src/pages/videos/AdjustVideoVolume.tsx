@@ -7,7 +7,7 @@ import { useVideoContext } from "../../contexts/VideoContext";
 
 export default function AdjustVideoVolume() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
-    const [videoURL, setVideoURL] = useState(undefined);
+    const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
     const [volume, setVolume] = useState(1);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
@@ -48,8 +48,11 @@ export default function AdjustVideoVolume() {
     useEffect(() => {
         if (!videoFile) return;
 
+        const url = URL.createObjectURL(videoFile);
+        setVideoURL(url);
+
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoFile);
+        video.src = url;
         
         video.onloadedmetadata = () => {
           setVideoMetadata({
@@ -62,7 +65,7 @@ export default function AdjustVideoVolume() {
         };
 
         return () => {
-          URL.revokeObjectURL(video.src);
+          URL.revokeObjectURL(url);
         };
     }, [videoFile]);
 

@@ -7,7 +7,7 @@ import BackToVideoTools from "../../components/BackToVideoTools";
 
 export default function TrimVideo() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
-    const [videoURL, setVideoURL] = useState(undefined);
+    const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
     // const videoRef = useRef(null);
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
@@ -64,8 +64,11 @@ export default function TrimVideo() {
     useEffect(() => {
         if (!videoFile) return;
 
+        const url = URL.createObjectURL(videoFile);
+        setVideoURL(url);
+
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoFile);
+        video.src = url;
         
         video.onloadedmetadata = () => {
           setVideoMetadata({
@@ -78,7 +81,7 @@ export default function TrimVideo() {
         };
 
         return () => {
-          URL.revokeObjectURL(video.src);
+          URL.revokeObjectURL(url);
         };
     }, [videoFile]);
 

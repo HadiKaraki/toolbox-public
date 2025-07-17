@@ -7,7 +7,7 @@ import BackToVideoTools from "../../components/BackToVideoTools";
 
 export default function RemoveAudioVideo() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
-    const [videoURL, setVideoURL] = useState(undefined);
+    const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
     // const videoRef = useRef(null);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
@@ -48,8 +48,11 @@ export default function RemoveAudioVideo() {
     useEffect(() => {
         if (!videoFile) return;
 
+        const url = URL.createObjectURL(videoFile);
+        setVideoURL(url);
+
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoFile);
+        video.src = url;
         
         video.onloadedmetadata = () => {
           setVideoMetadata({
@@ -62,7 +65,7 @@ export default function RemoveAudioVideo() {
         };
 
         return () => {
-          URL.revokeObjectURL(video.src);
+          URL.revokeObjectURL(url);
         };
     }, [videoFile]);
 

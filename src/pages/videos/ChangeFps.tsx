@@ -7,8 +7,7 @@ import BackToVideoTools from "../../components/BackToVideoTools";
 
 export default function ChangeFps() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
-    const [videoURL, setVideoURL] = useState(undefined);
-    // const videoRef = useRef(null);
+    const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
     const [fps, setFps] = useState(30);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
@@ -27,6 +26,7 @@ export default function ChangeFps() {
     const progress = currentTask?.progress || 0;
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.stopPropagation();
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         setVideoFile(file);
@@ -50,8 +50,11 @@ export default function ChangeFps() {
     useEffect(() => {
         if (!videoFile) return;
 
+        const url = URL.createObjectURL(videoFile);
+        setVideoURL(url);
+
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoFile);
+        video.src = url;
         
         video.onloadedmetadata = () => {
           setVideoMetadata({
@@ -64,7 +67,7 @@ export default function ChangeFps() {
         };
 
         return () => {
-          URL.revokeObjectURL(video.src);
+          URL.revokeObjectURL(url);
         };
     }, [videoFile]);
 
@@ -72,11 +75,6 @@ export default function ChangeFps() {
         setVideoFile(null);
         setVideoURL(undefined);
         setVideoMetadata({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
-        // if (videoRef.current) {
-        //   videoRef.current.pause();
-        //   videoRef.current.removeAttribute('src');
-        //   videoRef.current.load();
-        // }
     };
 
     const handleProcessing = async () => {

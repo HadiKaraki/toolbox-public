@@ -7,7 +7,7 @@ import BackToVideoTools from "../../components/BackToVideoTools";
 
 export default function ModifyQualityVideo() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
-    const [videoURL, setVideoURL] = useState(undefined);
+    const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
     // const videoRef = useRef(null);
     const [crf, setCrf] = useState(26);
     const [error, setError] = useState<string | null>(null);
@@ -50,8 +50,11 @@ export default function ModifyQualityVideo() {
     useEffect(() => {
         if (!videoFile) return;
 
+        const url = URL.createObjectURL(videoFile);
+        setVideoURL(url);
+
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoFile);
+        video.src = url;
         
         video.onloadedmetadata = () => {
           setVideoMetadata({
@@ -64,7 +67,7 @@ export default function ModifyQualityVideo() {
         };
 
         return () => {
-          URL.revokeObjectURL(video.src);
+          URL.revokeObjectURL(url);
         };
     }, [videoFile]);
 

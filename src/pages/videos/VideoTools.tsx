@@ -81,12 +81,12 @@ export default function VideoTools() {
       description: 'Fix shaky footage',
       icon: '📍',
     },
-    {
-      "name": "Show Motion Vectors",
-      "path": "/video/motion-vectors",
-      "description": "Visualize how video frames move with arrows",
-      "icon": "🎯"
-    }    
+    // {
+    //   "name": "Show Motion Vectors",
+    //   "path": "/video/motion-vectors",
+    //   "description": "Visualize how video frames move with arrows",
+    //   "icon": "🎯"
+    // }
   ];
 
   const [searchTerm, setSearchTerm] = useState('');

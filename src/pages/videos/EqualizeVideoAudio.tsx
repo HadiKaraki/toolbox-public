@@ -11,7 +11,7 @@ import FormControl from '@mui/material/FormControl';
 
 export default function EqualizeVideoAudio() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
-    const [videoURL, setVideoURL] = useState(undefined);
+    const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
     // const videoRef = useRef(null);
     const [equalizeMode, setEqualizeMode] = useState('');
     const [frequency, setFrequency] = useState(1000);
@@ -87,8 +87,11 @@ export default function EqualizeVideoAudio() {
     useEffect(() => {
         if (!videoFile) return;
 
+        const url = URL.createObjectURL(videoFile);
+        setVideoURL(url);
+
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoFile);
+        video.src = url;
         
         video.onloadedmetadata = () => {
           setVideoMetadata({
@@ -101,7 +104,7 @@ export default function EqualizeVideoAudio() {
         };
 
         return () => {
-          URL.revokeObjectURL(video.src);
+          URL.revokeObjectURL(url);
         };
     }, [videoFile]);
 

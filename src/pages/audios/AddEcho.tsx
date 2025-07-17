@@ -11,7 +11,7 @@ import FormControl from '@mui/material/FormControl';
 
 export default function AddEcho() {
     const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
-    const [audioURL, setAudioURL] = useState(undefined);
+    const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
     const [echoMode, setEchoMode] = useState('light');
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
@@ -55,8 +55,11 @@ export default function AddEcho() {
     useEffect(() => {
         if (!audioFile) return;
 
+        const url = URL.createObjectURL(audioFile);
+        setAudioURL(url);
+
         const audio = document.createElement('audio');
-        audio.src = URL.createObjectURL(audioFile);
+        audio.src = url;
         
         audio.onloadedmetadata = () => {
             setAudioMetadata({
@@ -68,7 +71,7 @@ export default function AddEcho() {
         };
 
         return () => {
-          URL.revokeObjectURL(audio.src);
+          URL.revokeObjectURL(url);
         };
     }, [audioFile]);
 
@@ -76,11 +79,6 @@ export default function AddEcho() {
         setAudioFile(null);
         setAudioURL(undefined);
         setAudioMetadata({name: '', duration: 0, format: 'mp4', size: '0'});
-        // if (audioRef.current) {
-        //   audioRef.current.pause();
-        //   audioRef.current.removeAttribute('src');
-        //   audioRef.current.load();
-        // }
     };
 
    const handleProcessing = async () => {
