@@ -73,11 +73,6 @@ export default function AdjustVideoVolume() {
         setVideoFile(null);
         setVideoURL(undefined);
         setVideoMetadata({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
-        // if (videoRef.current) {
-        //   videoRef.current.pause();
-        //   videoRef.current.removeAttribute('src');
-        //   videoRef.current.load();
-        // }
     };
 
    const handleProcessing = async () => {

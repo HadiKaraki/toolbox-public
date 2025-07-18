@@ -135,6 +135,7 @@ export default function PixelateImage() {
               handleDrop={handleDrop}
               handleRemoveImage={handleRemoveImage}
               setPreviewMode={setPreviewMode}
+              isProcessing={isProcessing}
               previewMode={previewMode}
               imageFile={imageFile}
               canvasRef={canvasRef}

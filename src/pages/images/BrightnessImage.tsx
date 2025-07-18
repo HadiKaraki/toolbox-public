@@ -162,6 +162,7 @@ export default function BrightnessImage() {
             handleDrop={handleDrop}
             handleRemoveImage={handleRemoveImage}
             setPreviewMode={setPreviewMode}
+            isProcessing={isProcessing}
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}

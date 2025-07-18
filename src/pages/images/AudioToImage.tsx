@@ -7,7 +7,9 @@ import BackToImageTools from "../../components/BackToImageTools";
 export default function AudioToImage() {
     const { imageFile, setImageFile } = useImageContext();
     const [audioFile, setAudioFile] = useState<File | null>(null);
-     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [audioDuration, setAudioDuration] = useState<number>(0);
+    const [audioFilePath, setAudioFilePath] = useState<string>('');
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -36,7 +38,15 @@ export default function AudioToImage() {
     const handleAudioFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
+        setAudioFilePath(file.path);
         setAudioFile(file);
+
+        const audio = document.createElement('audio');
+        audio.src = URL.createObjectURL(file);
+
+        audio.onloadedmetadata = () => {
+            setAudioDuration(audio.duration)
+        };
       }
     };
 
@@ -107,7 +117,7 @@ export default function AudioToImage() {
 
         // 2. Get save path
         const originalName = imageFile.name.replace(/\.[^/.]+$/, "");
-        const outputFilename = `${originalName}_bordered_${extension}`;
+        const outputFilename = `${originalName}_audio.mp4`;
         const outputPath = await window.electronAPI.showSaveDialog(outputFilename);
         
         if (!outputPath) {
@@ -118,7 +128,8 @@ export default function AudioToImage() {
         const result = await window.electronAPI.addAudioToImage({
           inputPath: tempResult.path,
           outputPath,
-          audioFile
+          audioFilePath,
+          audioDuration
         });
 
         if (result.success) {
@@ -134,7 +145,7 @@ export default function AudioToImage() {
     };
 
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
             {/* Header Section */}
             <BackToImageTools
                 title={"Add Audio Image"}
@@ -148,6 +159,7 @@ export default function AudioToImage() {
                     handleDrop={handleDrop}
                     handleRemoveImage={handleRemoveImage}
                     setPreviewMode={setPreviewMode}
+                    isProcessing={isProcessing}
                     previewMode={previewMode}
                     imageFile={imageFile}
                     canvasRef={canvasRef}
@@ -179,7 +191,7 @@ export default function AudioToImage() {
                                 <div className="p-4 bg-gray-100 dark:bg-black rounded-lg">
                                     <div className="flex justify-between items-center">
                                         <span className="font-medium truncate text-black dark:text-white">{audioFile.name}</span>
-                                        <button 
+                                        <button
                                             onClick={handleRemoveAudio}
                                             className="text-red-600 hover:text-red-800"
                                         >

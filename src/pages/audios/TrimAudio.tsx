@@ -7,7 +7,7 @@ import { useAudioContext } from "../../contexts/AudioContext";
 
 export default function TrimAudio() {
     const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
-    const [audioURL, setAudioURL] = useState(undefined);
+    const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [startGreaterThanEnd, setStartGreaterThanEnd] = useState(false);
@@ -66,20 +66,29 @@ export default function TrimAudio() {
     useEffect(() => {
         if (!audioFile) return;
 
+        const url = URL.createObjectURL(audioFile);
+        setAudioURL(url);
+
         const audio = document.createElement('audio');
-        audio.src = URL.createObjectURL(audioFile);
+        audio.src = url;
         
-        audio.onloadedmetadata = () => {
+        // More reliable metadata loading
+        const handleLoadedMetadata = () => {
             setAudioMetadata({
                 name: getBaseFileName(audioFile.name),
                 duration: Math.round(audio.duration),
-                format: audioFile.type.split('/')[1]?.toUpperCase() || 'UNKNOWN',
-                size: (audioFile.size / (1024 * 1024)).toFixed(1) + 'MB'
+                format: audioFile.type.split('/')[1]?.toUpperCase() || 
+                        audioFile.name.split('.').pop()?.toUpperCase() || 
+                        'UNKNOWN',
+                size: (audioFile.size / (1024 * 1024)).toFixed(2)
             });
         };
 
+        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
         return () => {
-          URL.revokeObjectURL(audio.src);
+            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            URL.revokeObjectURL(url);
         };
     }, [audioFile]);
 

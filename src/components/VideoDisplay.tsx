@@ -1,5 +1,4 @@
-import React from 'react';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 
 interface VideoMetadata {
   duration?: number;
@@ -7,6 +6,7 @@ interface VideoMetadata {
   height: number;
   format: string;
   size: string;
+  posterUrl?: string; // Added for potential poster image
 }
 
 interface VideoDisplayProps {
@@ -37,6 +37,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // Reset input to allow selecting same file again
       fileInputRef.current.click();
     }
   };
@@ -61,6 +62,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
             <p className="text-gray-500 dark:text-gray-400 mb-4">or</p>
             <button 
               className="text-white py-2 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700"
+              onClick={handleClick} // Added onClick to the button
             >
               Browse Files
             </button>
@@ -79,8 +81,9 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
           <div className="relative bg-gray-100 rounded-lg overflow-hidden">
             <video 
               controls
-              className="w-full"
-              preload='metadata'
+              className="w-full h-auto max-h-[500px]" // Added responsive height
+              preload="metadata"
+              poster={videoMetadata?.posterUrl} // Optional poster image
               src={videoURL}
             />
           </div>
@@ -89,7 +92,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
             <button
               onClick={handleRemoveVideo}
               disabled={progress > 0}
-              className='text-red-600 hover:text-red-800 flex items-center text-sm font-medium'
+              className={`text-red-600 hover:text-red-800 ${progress > 0 ? 'opacity-50 cursor-not-allowed' : ''} flex items-center text-sm font-medium`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -99,7 +102,14 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
 
             {videoMetadata && (
               <div className="text-sm text-gray-600 space-x-4 flex">
-                <span className="dark:text-gray-400">Size: {(parseFloat(videoMetadata.size)).toFixed(3)} MB</span>
+                <span className="dark:text-gray-400">Size: {parseFloat(videoMetadata.size).toFixed(2)} MB</span>
+                <span className="dark:text-gray-400">Resolution: {videoMetadata.width}x{videoMetadata.height}</span>
+                {videoMetadata.duration && (
+                  <span className="dark:text-gray-400">
+                    Duration: {Math.floor(videoMetadata.duration / 60)}:
+                    {(videoMetadata.duration % 60).toString().padStart(2, '0')}
+                  </span>
+                )}
               </div>
             )}
           </div>

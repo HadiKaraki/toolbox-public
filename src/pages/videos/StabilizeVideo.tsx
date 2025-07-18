@@ -8,7 +8,6 @@ import BackToVideoTools from "../../components/BackToVideoTools";
 export default function StabilizeVideo() {
     const { videoFile, setVideoFile, videoMetadata, setVideoMetadata } = useVideoContext();
     const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
-    // const videoRef = useRef(null);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
@@ -44,7 +43,6 @@ export default function StabilizeVideo() {
       }
     };
 
-    // Load video metadata when file changes
     useEffect(() => {
         if (!videoFile) return;
 
@@ -73,11 +71,6 @@ export default function StabilizeVideo() {
         setVideoFile(null);
         setVideoURL(undefined);
         setVideoMetadata({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
-        // if (videoRef.current) {
-        //   videoRef.current.pause();
-        //   videoRef.current.removeAttribute('src');
-        //   videoRef.current.load();
-        // }
     };
 
    const handleProcessing = async () => {
@@ -115,8 +108,8 @@ export default function StabilizeVideo() {
         });
 
         if (result.success) {
-            removeTask(newTaskId);
             setCompletedMsg(result.message);
+            removeTask(newTaskId);
         } else {
             if (result.message === "Processing failed: ffmpeg was killed with signal SIGTERM") {
               setCancelMsg("Processing cancelled");
@@ -139,7 +132,7 @@ export default function StabilizeVideo() {
         if (success) {
             setCancelMsg('Processing cancelled');
             removeTask(taskId);
-            updateProgress(taskId, 0); // Reset progress on cancel
+            updateProgress(taskId, 0);
         } else {
             setCancelMsg('Error canceling');
         }

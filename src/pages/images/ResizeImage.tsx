@@ -186,6 +186,7 @@ export default function ResizeImage() {
             handleRemoveImage={handleRemoveImage}
             setPreviewMode={setPreviewMode}
             previewMode={previewMode}
+            isProcessing={isProcessing}
             imageFile={imageFile}
             canvasRef={canvasRef}
             isPreviewed={false}

@@ -157,6 +157,7 @@ export default function GrayscaleImage() {
             handleDrop={handleDrop}
             handleRemoveImage={handleRemoveImage}
             setPreviewMode={setPreviewMode}
+            isProcessing={isProcessing}
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}

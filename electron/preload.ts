@@ -37,6 +37,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   noiseImage: (args: any) => ipcRenderer.invoke('image-noising', args),
   resizeImage: (args: any) => ipcRenderer.invoke('image-resize', args),
   addBorder: (args: any) => ipcRenderer.invoke('image-border', args),
+  addAudioToImage: (args: any) => ipcRenderer.invoke('image-audio', args),
   // VIDEOS
   adjustVideoVolume: (args: any) => ipcRenderer.invoke('video-volume', args),
   adjustFps: (args: any) => ipcRenderer.invoke('video-fps', args),

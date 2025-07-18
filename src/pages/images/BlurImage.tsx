@@ -155,6 +155,7 @@ export default function BlurImage() {
             handleDrop={handleDrop}
             handleRemoveImage={handleRemoveImage}
             setPreviewMode={setPreviewMode}
+            isProcessing={isProcessing}
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}

@@ -148,11 +148,11 @@ const UpdateManager = () => {
           You're Up to Date
         </h2>
         <p className="text-gray-700 dark:text-gray-300 mb-6">
-          Media Tools Pro is running the latest version.
+          ToolBox Pro is running the latest version.
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="px-6 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+          className="px-6 py-2 border border-blue-600 hover:cursor-pointer text-blue-600 hover:bg-blue-50 dark:border-white dark:text-white hover:text-black rounded-lg transition-colors"
         >
           Check Again
         </button>

@@ -7,7 +7,7 @@ import { useAudioContext } from "../../contexts/AudioContext";
 
 export default function NormalizeAudio() {
     const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
-    const [audioURL, setAudioURL] = useState(undefined);
+    const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
     const [cancelMsg, setCancelMsg] = useState<string | null>(null);
@@ -50,20 +50,29 @@ export default function NormalizeAudio() {
     useEffect(() => {
         if (!audioFile) return;
 
+        const url = URL.createObjectURL(audioFile);
+        setAudioURL(url);
+
         const audio = document.createElement('audio');
-        audio.src = URL.createObjectURL(audioFile);
+        audio.src = url;
         
-        audio.onloadedmetadata = () => {
+        // More reliable metadata loading
+        const handleLoadedMetadata = () => {
             setAudioMetadata({
                 name: getBaseFileName(audioFile.name),
                 duration: Math.round(audio.duration),
-                format: audioFile.type.split('/')[1]?.toUpperCase() || 'UNKNOWN',
-                size: (audioFile.size / (1024 * 1024)).toFixed(1) + 'MB'
+                format: audioFile.type.split('/')[1]?.toUpperCase() || 
+                        audioFile.name.split('.').pop()?.toUpperCase() || 
+                        'UNKNOWN',
+                size: (audioFile.size / (1024 * 1024)).toFixed(2)
             });
         };
 
+        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
         return () => {
-          URL.revokeObjectURL(audio.src);
+            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            URL.revokeObjectURL(url);
         };
     }, [audioFile]);
 
@@ -179,6 +188,36 @@ export default function NormalizeAudio() {
                     progress={progress}
                     taskId={currentTaskId}
                 />
+
+                <div className="bg-blue-50 p-4 dark:bg-gray-900/60 rounded-lg">
+                  <h3 className="text-sm font-medium dark:text-white text-blue-800 mb-2">Normalization Tips</h3>
+                  <ul className="text-xs dark:text-gray-300 text-blue-700 space-y-1">
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span><strong>Normalization</strong> adjusts the overall volume of the audio file.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>It makes the quiet and loud parts more balanced without clipping.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Useful for making audio clearer and more consistent for playback on any device.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Does <strong>not change</strong> the pitch or speed — only the loudness.</span>
+                    </li>
+                  </ul>
+                </div>
             </div>
           </div>
         </div>

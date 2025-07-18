@@ -128,7 +128,7 @@ export default function ConvertImage() {
     ];
 
     return (
-      <div className="container lg:mt-5 mx-auto px-4 py-8 max-w-5xl max-w-6xl">
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
         {/* Header Section */}
         <BackToImageTools
             title={"Convert Image"}
@@ -142,6 +142,7 @@ export default function ConvertImage() {
             handleDrop={handleDrop}
             handleRemoveImage={handleRemoveImage}
             setPreviewMode={setPreviewMode}
+            isProcessing={isProcessing}
             previewMode={previewMode}
             imageFile={imageFile}
             canvasRef={canvasRef}

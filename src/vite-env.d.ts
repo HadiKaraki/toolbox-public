@@ -105,7 +105,8 @@ interface Window {
     addAudioToImage: (args: {
       inputPath: string;
       outputPath: string;
-      audioFile: File | null;
+      audioFilePath: string;
+      audioDuration: number;
     }) => Promise<{ success: boolean; message: string }>;
   
     // VIDEOS

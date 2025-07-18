@@ -29,23 +29,28 @@ export default function AddEcho() {
     const progress = currentTask?.progress || 0;
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        setAudioFile(file);
-      }
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            // Validate audio file type more robustly
+            if (!file.type.startsWith('audio/') && !['mp3', 'wav', 'ogg', 'flac', 'm4a'].some(ext => file.name.endsWith(`.${ext}`))) {
+            setError('Please select an audio file');
+            return;
+            }
+            setAudioFile(file);
+        }
     };
 
     const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        const file = e.dataTransfer.files[0];
-        if (!file.type.startsWith('audio/')) {
-          setError('Please drop a audio file');
-          return;
+        e.preventDefault();
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            // Same validation as above
+            if (!file.type.startsWith('audio/') && !['mp3', 'wav', 'ogg', 'flac', 'm4a'].some(ext => file.name.endsWith(`.${ext}`))) {
+            setError('Please drop an audio file');
+            return;
+            }
+            setAudioFile(file);
         }
-        
-        setAudioFile(file);
-      }
     };
 
     function getBaseFileName(filename: string) {
@@ -61,17 +66,23 @@ export default function AddEcho() {
         const audio = document.createElement('audio');
         audio.src = url;
         
-        audio.onloadedmetadata = () => {
+        // More reliable metadata loading
+        const handleLoadedMetadata = () => {
             setAudioMetadata({
                 name: getBaseFileName(audioFile.name),
                 duration: Math.round(audio.duration),
-                format: audioFile.type.split('/')[1]?.toUpperCase() || 'UNKNOWN',
-                size: (audioFile.size / (1024 * 1024)).toFixed(1) + 'MB'
+                format: audioFile.type.split('/')[1]?.toUpperCase() || 
+                        audioFile.name.split('.').pop()?.toUpperCase() || 
+                        'UNKNOWN',
+                size: (audioFile.size / (1024 * 1024)).toFixed(2)
             });
         };
 
+        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
         return () => {
-          URL.revokeObjectURL(url);
+            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            URL.revokeObjectURL(url);
         };
     }, [audioFile]);
 

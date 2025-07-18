@@ -63,12 +63,12 @@ export default function ImageTools() {
       description: 'Add border to images',
       icon: '🔲',
     },
-    {
-      name: 'Pixelate Image',
-      path: '/image/pixelate',
-      description: 'Create pixelated or mosaic effects on images',
-      icon: '🧩',
-    },
+    // {
+    //   name: 'Pixelate Image',
+    //   path: '/image/pixelate',
+    //   description: 'Create pixelated or mosaic effects on images',
+    //   icon: '🧩',
+    // },
     {
       name: 'Add Noise',
       path: '/image/noise',

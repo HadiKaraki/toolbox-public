@@ -7,7 +7,7 @@ import { useAudioContext } from "../../contexts/AudioContext";
 
 export default function ModifyAudioPitch() {
     const { audioFile, setAudioFile, audioMetadata, setAudioMetadata } = useAudioContext();
-    const [audioURL, setAudioURL] = useState(undefined);
+    const [audioURL, setAudioURL] = useState<string | undefined>(undefined);
     const [pitch, setPitch] = useState(1);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
@@ -51,20 +51,29 @@ export default function ModifyAudioPitch() {
     useEffect(() => {
         if (!audioFile) return;
 
-        const audio = document.createElement('audio');
-        audio.src = URL.createObjectURL(audioFile);
+        const url = URL.createObjectURL(audioFile);
+        setAudioURL(url);
 
-        audio.onloadedmetadata = () => {
+        const audio = document.createElement('audio');
+        audio.src = url;
+        
+        // More reliable metadata loading
+        const handleLoadedMetadata = () => {
             setAudioMetadata({
                 name: getBaseFileName(audioFile.name),
                 duration: Math.round(audio.duration),
-                format: audioFile.type.split('/')[1]?.toUpperCase() || 'UNKNOWN',
-                size: (audioFile.size / (1024 * 1024)).toFixed(1) + 'MB'
+                format: audioFile.type.split('/')[1]?.toUpperCase() || 
+                        audioFile.name.split('.').pop()?.toUpperCase() || 
+                        'UNKNOWN',
+                size: (audioFile.size / (1024 * 1024)).toFixed(2)
             });
         };
 
+        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
         return () => {
-            URL.revokeObjectURL(audio.src);
+            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            URL.revokeObjectURL(url);
         };
     }, [audioFile]);
 

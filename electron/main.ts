@@ -18,6 +18,10 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
+    minWidth: 800,
+    minHeight: 600,
+    width: 1024,
+    height: 768,
     // icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     icon: path.join(process.env.VITE_PUBLIC, 'toolbox-icon-nobg.png'),
     webPreferences: {
@@ -74,6 +78,7 @@ app.whenReady().then(async() => {
   const { imageGrayscaleHandler } = await import('./image/imageGrayscale.ts');
   const { imageResizingHandler } = await import('./image/imageResizing.ts');
   const { imageBorderHandler } = await import('./image/imageBorder.ts');
+  const { imageAudioHandler } = await import('./image/imageAddAudio.ts');
   // import { imagePixelatingHandler } from './image/imagePixelation.ts';
   // VIDEOS
   const { changeFpsHandler } = await import('./video/videoChangeFps.ts');
@@ -117,6 +122,7 @@ app.whenReady().then(async() => {
   imageGrayscaleHandler();
   imageResizingHandler();
   imageBorderHandler();
+  imageAudioHandler();
   // imagePixelatingHandler();
   // VIDEOS
   changeFpsHandler();
