@@ -48,7 +48,6 @@ const AudioDisplay: React.FC<AudioDisplayProps> = ({
           className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          onClick={handleClick}
         >
           <label className="flex flex-col items-center justify-center space-y-2 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +55,9 @@ const AudioDisplay: React.FC<AudioDisplayProps> = ({
             </svg>
             <span className="text-gray-600 dark:text-white">Click to upload or drag and drop</span>
             <p className="text-gray-500 dark:text-gray-400 mb-4">or</p>
-            <button 
+            <button
+              type='button'
+              onClick={handleClick}
               className="text-white py-2 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-gray-600 hover:cursor-pointer dark:hover:from-gray-700 dark:hover:to-gray-700"
             >
               Browse Files

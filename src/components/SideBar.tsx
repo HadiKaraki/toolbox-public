@@ -40,7 +40,7 @@ const SideBar = () => {
     }, [dispatch]);
 
     return (
-        <div className="w-64 bg-gradient-to-r from-blue-600 to-purple-600 py-5 px-4 border-r dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700">
+        <div className="w-68 bg-gradient-to-r from-blue-600 to-purple-600 py-5 px-4 border-r dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-gray-900 dark:to-gray-800 py-5 px-4">
                 <h1 className="text-xl text-white dark:text-gray-300 transition-colors font-semibold flex items-center">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

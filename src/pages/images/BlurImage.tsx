@@ -121,11 +121,17 @@ export default function BlurImage() {
           throw new Error('Save canceled by user');
         }
 
+        let sigmaValue = sigma;
+        if (sigmaValue === 0.1) {
+          sigmaValue += 0.1; // blur in sharp accepts between 0.3 and 1000
+        }
+        sigmaValue *= 3.5
+
         // 3. Process image
         const result = await window.electronAPI.blurImage({
           inputPath: tempResult.path,
           outputPath,
-          sigma: sigma + 2
+          sigma: sigmaValue
         });
 
         if (result.success) {

@@ -51,7 +51,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
           className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          onClick={handleClick}
+          // onClick={handleClick}
         >
           <label className="flex flex-col items-center justify-center space-y-2 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

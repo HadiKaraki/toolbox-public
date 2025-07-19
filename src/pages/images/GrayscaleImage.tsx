@@ -179,7 +179,7 @@ export default function GrayscaleImage() {
                 <input
                     id="grayscaleRange"
                     type="range"
-                    min="0"
+                    min="0.1"
                     max="1"
                     step="0.1"
                     value={grayscale}
