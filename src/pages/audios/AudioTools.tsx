@@ -99,8 +99,8 @@ export default function AudioTools() {
             Audio Editing Toolkit
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Transform your images with professional-grade editing tools. 
-            Enhance, modify, and optimize your visuals in just a few clicks.
+            Professional audio editing tools for conversion, optimization, 
+            and transformation of your media files.
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function AudioTools() {
         </div>
         
         {/* Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-w-7xl max-w-7xl mx-auto gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto gap-6">
           {filteredTools.map((tool, index) => (
             <ToolCard 
               key={index}

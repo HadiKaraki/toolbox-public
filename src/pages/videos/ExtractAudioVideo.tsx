@@ -151,7 +151,7 @@ export default function ExtractAudioVideo() {
   };
             
     return (
-        <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
+        <div className="container lg:mt-5 mx-auto px-4 py-8 xl:min-w-5xl max-w-6xl">
         {/* Header Section */}
           <BackToVideoTools
             title={"Audio Extractor"}

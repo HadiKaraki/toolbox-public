@@ -163,7 +163,7 @@ const UpdateManager = () => {
   // Update available
   if (updateInfo && updateInfo.available && !updateInfo.isLatest) {
     return (
-      <div className="min-w-2xl max-w-2xl mt-34 mx-auto p-6">
+      <div className="xl:min-w-2xl max-w-2xl mt-34 mx-auto p-6">
         <div className="flex items-start gap-4 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm mb-6">
           <RefreshCw className="w-10 h-10 text-blue-500 mt-1 flex-shrink-0" />
           <div>

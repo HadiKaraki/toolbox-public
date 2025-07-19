@@ -37,7 +37,7 @@ export default function FavoriteTools() {
   }
 
   return (
-    <div className='flex flex-col min-h-screen container mx-auto px-4 py-12 relative'>
+      <div className="container lg:mt-5 mx-auto px-4 py-8 min-w-5xl max-w-6xl">
          <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
                 Favoite Tools
@@ -58,7 +58,7 @@ export default function FavoriteTools() {
           />
         </div>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-w-7xl mx-auto gap-6">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto gap-6">
             {filteredTools.map((tool) => (
                 <ToolCard
                     key={tool.title}

@@ -157,7 +157,7 @@ export default function Home() {
         </div>
         
         {/* Tools by Category */}
-        <div className="min-w-7xl max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
           {toolCategories.map(category => (
             <section 
               key={category.id} 
