@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AudioDisplay from "../../components/AudioDisplay";
 import { useProgressContext } from "../../contexts/ProgressContext";
 import AudioSubmitBtn from "../../components/AudioSubmitBtn";
@@ -24,14 +24,14 @@ export default function ModifyAudioPitch() {
     const currentTask = currentTaskId ? tasks[currentTaskId] : null;
     const progress = currentTask?.progress || 0;
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setAudioFile(file);
         }
-    };
+    }, []);
 
-    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             const file = e.dataTransfer.files[0];
@@ -42,7 +42,7 @@ export default function ModifyAudioPitch() {
 
             setAudioFile(file);
         }
-    };
+    }, []);
 
     function getBaseFileName(filename: string) {
         return filename.replace(/\.[^/.]+$/, '');
@@ -77,16 +77,11 @@ export default function ModifyAudioPitch() {
         };
     }, [audioFile]);
 
-    const handleRemoveAudio = () => {
+    const handleRemoveAudio = useCallback(() => {
         setAudioFile(null);
         setAudioURL(undefined);
         setAudioMetadata({name: '', duration: 0, format: 'mp4', size: '0'});
-        // if (audioRef.current) {
-        //   audioRef.current.pause();
-        //   audioRef.current.removeAttribute('src');
-        //   audioRef.current.load();
-        // }
-    };
+    }, []);
 
     const handleProcessing = async () => {
         if (!audioFile) return;

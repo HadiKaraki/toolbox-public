@@ -113,4 +113,4 @@ const AudioDisplay: React.FC<AudioDisplayProps> = ({
   );
 };
 
-export default AudioDisplay;
+export default React.memo(AudioDisplay);

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useImageContext } from '../../contexts/ImageContext';
 import ImageDisplay from '../../components/ImageDisplay';
 import ImageSubmitBtn from "../../components/ImageSubmitBtn";
@@ -13,14 +13,14 @@ export default function NoiseImage() {
     const [noise, setNoise] = useState(20);
     const [isProcessing, setIsProcessing] = useState(false);
     
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         setImageFile(file);
       }
-    };
+    }, []);
 
-    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
@@ -31,7 +31,7 @@ export default function NoiseImage() {
         
         setImageFile(file);
       }
-    };
+    }, []);
 
     useEffect(() => {
       if (!imageFile || !canvasRef.current) return;
@@ -70,13 +70,13 @@ export default function NoiseImage() {
       };
     }, [imageFile, noise, previewMode]);
 
-    const handleRemoveImage = () => {
+    const handleRemoveImage = useCallback(() => {
       setImageFile(null);
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d');
         ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
-    };
+    }, []);
 
     const handleProcessing = async () => {
       if (!imageFile) return;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useProgressContext } from "../../contexts/ProgressContext";
 import VideoDisplay from "../../components/VideoDisplay";
 import VideoSubmitBtn from "../../components/VideoSubmitBtn";
@@ -24,14 +24,14 @@ export default function AdjustVideoVolume() {
     const currentTask = currentTaskId ? tasks[currentTaskId] : null;
     const progress = currentTask?.progress || 0;
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         setVideoFile(file);
       }
-    };
+    }, []);
 
-    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
@@ -42,7 +42,7 @@ export default function AdjustVideoVolume() {
         
         setVideoFile(file);
       }
-    };
+    }, []);
 
     // Load video metadata when file changes
     useEffect(() => {
@@ -69,11 +69,11 @@ export default function AdjustVideoVolume() {
         };
     }, [videoFile]);
 
-    const handleRemoveVideo = () => {
+    const handleRemoveVideo = useCallback(() => {
         setVideoFile(null);
         setVideoURL(undefined);
         setVideoMetadata({duration: 0, width: 0, height: 0, format: 'mp4', size: '0'});
-    };
+    }, []);
 
    const handleProcessing = async () => {
       if (!videoFile) return;

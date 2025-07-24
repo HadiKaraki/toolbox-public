@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useImageContext } from '../../contexts/ImageContext';
 import ImageDisplay from '../../components/ImageDisplay';
 import ImageSubmitBtn from "../../components/ImageSubmitBtn";
@@ -14,22 +14,12 @@ export default function AddBorderImage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [previewMode, setPreviewMode] = useState(true);
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         setImageFile(file);
-        
-        // Also read the file as array buffer for processing
-        // const arrayBuffer = await file.arrayBuffer();
-        // const buffer = Buffer.from(arrayBuffer);
-        
-        // Send to main process to get image data
-        // const imageData = await ipcRenderer.invoke('get-image-data', buffer);
-        // if (imageData) {
-        //   setOriginalImageData(imageData);
-        // }
       }
-    };
+    }, []);
 
     const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newColor = e.target.value;
@@ -37,7 +27,7 @@ export default function AddBorderImage() {
         // onChange(borderWidth, newColor);
     };
 
-    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
@@ -47,15 +37,8 @@ export default function AddBorderImage() {
         }
         
         setImageFile(file);
-        
-        // const arrayBuffer = await file.arrayBuffer();
-        // const buffer = Buffer.from(arrayBuffer);
-        // const imageData = await ipcRenderer.invoke('get-image-data', buffer);
-        // if (imageData) {
-        //   setOriginalImageData(imageData);
-        // }
       }
-    };
+    }, []);
 
     // Load image into canvas when file or brightness changes
     useEffect(() => {
@@ -109,13 +92,13 @@ export default function AddBorderImage() {
       };
     }, [imageFile, previewMode, borderWidth, borderColor]);   
 
-    const handleRemoveImage = () => {
+    const handleRemoveImage = useCallback(() => {
       setImageFile(null);
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d');
         ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
-    };
+    }, []);
 
     const handleProcessing = async () => {
       if (!imageFile) return;

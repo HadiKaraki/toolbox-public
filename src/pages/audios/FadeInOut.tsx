@@ -12,7 +12,6 @@ export default function FadeInOut() {
     const [fadeInDuration, setFadeInDuration] = useState('');
     const [fadeOutStartTime, setFadeOutStartTime] = useState('');
     const [fadeOutDuration, setFadeOutDuration] = useState('');
-    const [audioDuration, setAudioDuration] = useState(0);
     const [timingErrors, setTimingErrors] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [completedMsg, setCompletedMsg] = useState<string | null>(null);
@@ -85,7 +84,6 @@ export default function FadeInOut() {
                         'UNKNOWN',
                 size: (audioFile.size / (1024 * 1024)).toFixed(2)
             });
-            setAudioDuration(audio.duration)
         };
 
         audio.addEventListener('loadedmetadata', handleLoadedMetadata);
@@ -103,6 +101,8 @@ export default function FadeInOut() {
         const fadeOutStart = hhmmssToSeconds(fadeOutStartTime);
         const fadeOutDurationSeconds = hhmmssToSeconds(fadeOutDuration);
 
+        const audioDuration = audioMetadata.duration;
+
         if (fadeInStart > audioDuration) {
             setError(`Fade in start time exceeds audio duration (${secondsToHHMMSS(audioDuration)}).`);
             setTimingErrors(true);
@@ -118,7 +118,7 @@ export default function FadeInOut() {
         } else if (fadeOutDurationSeconds > audioDuration) {
             setError(`Fade out duration exceeds audio duration (${secondsToHHMMSS(audioDuration)}).`);
             setTimingErrors(true);
-        } else if (fadeOutStart + fadeInDurationSeconds > audioDuration) {
+        } else if (fadeOutStart + fadeOutDurationSeconds > audioDuration) {
             setError(`Fade out duration exceeds audio duration (${secondsToHHMMSS(audioDuration)}).`);
             setTimingErrors(true)
         } else {
@@ -126,7 +126,7 @@ export default function FadeInOut() {
             setTimingErrors(false);
         }
 
-    }, [fadeInStartTime, fadeOutStartTime, fadeInDuration, fadeOutDuration, audioDuration]);
+    }, [fadeInStartTime, fadeOutStartTime, fadeInDuration, fadeOutDuration, audioMetadata.duration]);
 
     const handleRemoveAudio = () => {
         setAudioFile(null);
@@ -301,7 +301,7 @@ export default function FadeInOut() {
                             />
                         </div>
                     </div>
-                    <label className={`block dark:text-gray-400 text-sm font-light mb-2 ${!audioFile ? 'hidden' : ''}`}>Audio Duration: {secondsToHHMMSS(audioDuration)}</label>
+                    <label className={`block dark:text-gray-400 text-sm font-light mb-2 ${!audioFile ? 'hidden' : ''}`}>Audio Duration: {secondsToHHMMSS(audioMetadata.duration)}</label>
                 </div>
 
                 {/* Process Button */}

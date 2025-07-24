@@ -119,4 +119,4 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
   );
 };
 
-export default VideoDisplay;
+export default React.memo(VideoDisplay);

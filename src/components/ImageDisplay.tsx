@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 
 interface ImageDisplayProps {
     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -12,7 +12,7 @@ interface ImageDisplayProps {
     isPreviewed: boolean;
   }
 
-  export default function ImageDisplay({ 
+  const ImageDisplay = ({ 
     handleFileChange, 
     handleDrop,
     handleRemoveImage, 
@@ -22,7 +22,7 @@ interface ImageDisplayProps {
     imageFile,
     canvasRef,
     isPreviewed
-  }: ImageDisplayProps) {
+  }: ImageDisplayProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -113,3 +113,5 @@ interface ImageDisplayProps {
       </div>
     );
 }
+
+export default React.memo(ImageDisplay);
